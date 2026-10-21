@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { BRAND, bookingLinkProps } from '../config/brand.js';
 import ToothLogo from './hero/ToothLogo.jsx';
 import ArrowIcon from './hero/ArrowIcon.jsx';
+import { useActiveSection } from '../hooks/useActiveSection.js';
+
+const NAV_HREFS = BRAND.nav.map((i) => i.href);
+
 
 /**
  * Compact floating nav that appears once the hero's own nav has scrolled away, so navigation
@@ -10,6 +14,7 @@ import ArrowIcon from './hero/ArrowIcon.jsx';
  */
 export default function StickyNav() {
   const [visible, setVisible] = useState(false);
+  const active = useActiveSection(NAV_HREFS);
 
   useEffect(() => {
     const heroNav = document.querySelector('[data-hero="nav"]');
@@ -23,14 +28,18 @@ export default function StickyNav() {
   return (
     <header className="sticky-nav" data-visible={visible || undefined} inert={!visible}>
       <a className="sticky-nav__logo" href="#top" aria-label={`${BRAND.name} — back to top`}>
-        <ToothLogo className="sticky-nav__mark" />
+        <span className="sticky-nav__chip" aria-hidden="true">
+          <ToothLogo className="sticky-nav__mark" />
+        </span>
         <span>{BRAND.shortName}</span>
       </a>
       <nav className="sticky-nav__links" aria-label="Sections">
         <ul>
           {BRAND.nav.map((item) => (
             <li key={item.href}>
-              <a href={item.href}>{item.label}</a>
+              <a href={item.href} aria-current={active === item.href ? 'true' : undefined}>
+                {item.label}
+              </a>
             </li>
           ))}
         </ul>
