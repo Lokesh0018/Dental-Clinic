@@ -46,6 +46,86 @@
   .about::after {
     animation: none;
   }
+  .about__bg-item {
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------- background addon elements */
+.about__bg-addons {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.about__bg-item {
+  position: absolute;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.45;
+  filter: drop-shadow(0 20px 30px rgb(23 52 74 / 0.16));
+  transition: opacity 0.5s ease;
+  will-change: transform;
+}
+.about__bg-item:hover {
+  opacity: 0.65;
+}
+
+/* Strategic positions around the About section */
+.about__bg-item--mirror {
+  top: 8%;
+  left: -2%;
+  width: clamp(10rem, 16vw, 17rem);
+  height: auto;
+  transform: rotate(25deg);
+}
+.about__bg-item--tester {
+  top: 36%;
+  right: -2%;
+  width: clamp(9rem, 14vw, 15rem);
+  height: auto;
+  transform: rotate(-35deg);
+}
+.about__bg-item--cutter {
+  top: 52%;
+  left: 1%;
+  width: clamp(8.5rem, 13vw, 14rem);
+  height: auto;
+  transform: rotate(-15deg);
+}
+.about__bg-item--chair {
+  top: 76%;
+  right: 2%;
+  width: clamp(11rem, 18vw, 20rem);
+  height: auto;
+  opacity: 0.42;
+}
+.about__bg-item--tooth {
+  top: 88%;
+  left: 8%;
+  width: clamp(7.5rem, 11vw, 12rem);
+  height: auto;
+  opacity: 0.42;
+}
+
+@media (max-width: 900px) {
+  .about__bg-item {
+    opacity: 0.28;
+  }
+  .about__bg-item--mirror {
+    left: -6%;
+    top: 4%;
+  }
+  .about__bg-item--tester {
+    right: -6%;
+    top: 38%;
+  }
+  .about__bg-item--chair {
+    right: -4%;
+    top: 82%;
+  }
 }
 
 /* ------------------------------------------------------------- intro */

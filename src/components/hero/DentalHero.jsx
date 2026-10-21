@@ -6,7 +6,7 @@ import Navigation from './Navigation.jsx';
 import HeroCopy from './HeroCopy.jsx';
 import PatientProof from './PatientProof.jsx';
 import ConsultBadge from './ConsultBadge.jsx';
-import FrameSequence, { sequenceUrls } from './FrameSequence.jsx';
+import FrameSequence from './FrameSequence.jsx';
 import { BRAND } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import '../../styles/hero.css';
@@ -14,7 +14,18 @@ import '../../styles/hero.css';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const SEQ = BRAND.hero.sequence;
-const FRAME_SETS = SEQ.sets.map(({ width, path }) => ({ width, urls: sequenceUrls(SEQ, path) }));
+
+const rawKeyed = import.meta.glob('../../assets/frames/frames_keyed/*.webp', { eager: true, import: 'default' });
+const raw760 = import.meta.glob('../../assets/frames/frames_keyed_760/*.webp', { eager: true, import: 'default' });
+
+const urlsKeyed = Object.keys(rawKeyed).sort().map((k) => rawKeyed[k]);
+const urls760 = Object.keys(raw760).sort().map((k) => raw760[k]);
+
+const FRAME_SETS = [
+  { width: 760, urls: urls760 },
+  { width: 1274, urls: urlsKeyed },
+];
+
 // Data-saver users get the still first frame instead of 4–8 MB of frames.
 const saveData = typeof navigator !== 'undefined' && navigator.connection?.saveData === true;
 

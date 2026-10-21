@@ -5,6 +5,12 @@ import { useGSAP } from '@gsap/react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
+import aboutImg from '../../assets/images/about.webp';
+import chairImg from '../../assets/images/chair.webp';
+import cutterImg from '../../assets/images/cutter.webp';
+import mirrorImg from '../../assets/images/mouth-mirror.webp';
+import testerImg from '../../assets/images/tester.webp';
+import toothHeroImg from '../../assets/images/tooth-hero.png';
 import '../../styles/about.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -108,12 +114,29 @@ export default function AboutSection() {
         ease: 'power2.inOut',
         scrollTrigger: { trigger: '.about__steps', start: 'top 82%', once: true },
       });
+
+      // Background floating items parallax scrolling effect (moves dynamically as you scroll up and down)
+      const pRange = { trigger: root.current, start: 'top bottom', end: 'bottom top', scrub: 1.5 };
+      gsap.fromTo('.about__bg-item--mirror', { y: 120, rotation: 10 }, { y: -160, rotation: 32, ease: 'none', scrollTrigger: pRange });
+      gsap.fromTo('.about__bg-item--tester', { y: 160, rotation: -10 }, { y: -220, rotation: -38, ease: 'none', scrollTrigger: pRange });
+      gsap.fromTo('.about__bg-item--cutter', { y: 140, rotation: -5 }, { y: -190, rotation: -26, ease: 'none', scrollTrigger: pRange });
+      gsap.fromTo('.about__bg-item--chair', { y: 100, rotation: -4 }, { y: -150, rotation: 14, ease: 'none', scrollTrigger: pRange });
+      gsap.fromTo('.about__bg-item--tooth', { y: 130, rotation: -6 }, { y: -180, rotation: 18, ease: 'none', scrollTrigger: pRange });
     },
     { scope: root, dependencies: [reduced], revertOnUpdate: true },
   );
 
   return (
     <section id="about" ref={root} className="section about" aria-labelledby="about-title">
+      {/* Background floating addon elements with parallax effect */}
+      <div className="about__bg-addons" aria-hidden="true">
+        <img className="about__bg-item about__bg-item--mirror" src={mirrorImg} alt="" width="300" height="300" loading="lazy" decoding="async" />
+        <img className="about__bg-item about__bg-item--tester" src={testerImg} alt="" width="260" height="400" loading="lazy" decoding="async" />
+        <img className="about__bg-item about__bg-item--cutter" src={cutterImg} alt="" width="280" height="340" loading="lazy" decoding="async" />
+        <img className="about__bg-item about__bg-item--chair" src={chairImg} alt="" width="320" height="460" loading="lazy" decoding="async" />
+        <img className="about__bg-item about__bg-item--tooth" src={toothHeroImg} alt="" width="240" height="240" loading="lazy" decoding="async" />
+      </div>
+
       <div className="section__inner">
         {/* intro: copy + the studio "promise" panel */}
         <div className="about__top">
@@ -153,7 +176,7 @@ export default function AboutSection() {
             <div className="about__stage">
               <img
                 className="about__promise-img"
-                src="/images/about.png"
+                src={aboutImg}
                 alt=""
                 width="1672"
                 height="941"
