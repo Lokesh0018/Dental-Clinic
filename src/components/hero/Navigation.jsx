@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { BRAND, bookingLinkProps } from '../../config/brand.js';
+import { BRAND } from '../../config/brand.js';
 import ToothLogo from './ToothLogo.jsx';
+import ArrowIcon from './ArrowIcon.jsx';
 
 export default function Navigation() {
   const [open, setOpen] = useState(false);
@@ -30,6 +31,7 @@ export default function Navigation() {
       <div className="nav__bar">
         <a className="nav__logo" href="#top" aria-label={`${BRAND.name} — home`}>
           <ToothLogo className="nav__logo-mark" />
+          <span className="nav__logo-text">{BRAND.shortName}</span>
         </a>
 
         <nav className="nav__links" aria-label="Primary">
@@ -42,8 +44,11 @@ export default function Navigation() {
           </ul>
         </nav>
 
-        <a className="nav__book" href={BRAND.booking.href} {...bookingLinkProps}>
-          {BRAND.booking.label}
+        <a className="pill" href={BRAND.navCta.href}>
+          {BRAND.navCta.label}
+          <span className="pill__dot" aria-hidden="true">
+            <ArrowIcon />
+          </span>
         </a>
 
         <button
@@ -52,9 +57,9 @@ export default function Navigation() {
           className="nav__toggle"
           aria-expanded={open}
           aria-controls="mobile-menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
           onClick={() => setOpen((v) => !v)}
         >
-          <span className="nav__toggle-label">{open ? 'Close' : 'Menu'}</span>
           <span className="nav__toggle-icon" aria-hidden="true" data-open={open} />
         </button>
       </div>
@@ -69,11 +74,6 @@ export default function Navigation() {
                 </a>
               </li>
             ))}
-            <li>
-              <a className="nav__book nav__book--panel" href={BRAND.booking.href} onClick={close} {...bookingLinkProps}>
-                {BRAND.booking.label}
-              </a>
-            </li>
           </ul>
         </nav>
       </div>

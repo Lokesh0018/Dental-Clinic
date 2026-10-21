@@ -1,94 +1,137 @@
 /* =====================================================================
-   Hero — powder-blue studio, white wordmark, one giant glossy molar
+   Hero — rounded blue card: nav, big headline + avatar stack, proof
+   badge with a patient cut-out, a giant 3D molar, rotating lime badge
    ===================================================================== */
 .hero {
-  --mark-size: clamp(4.5rem, 13.6vw, 12.5rem);
+  --consult-size: clamp(6.5rem, 9.5vw, 9.5rem);
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
+  padding: var(--card-gap);
+  background: var(--paper);
+}
+
+.hero__card {
+  position: relative;
+  min-height: calc(100svh - var(--card-gap) * 2);
+  border-radius: clamp(1.25rem, 2.6vw, 2.5rem);
   overflow: clip;
   isolation: isolate;
   color: var(--white);
-  background: var(--sky);
+  background:
+    radial-gradient(60% 70% at 72% 40%, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 70%),
+    linear-gradient(160deg, var(--hero-blue-light) 0%, var(--hero-blue) 55%, #5089ca 100%);
 }
 
-/* ------------------------------------------------------------ backdrop */
-.hero__backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: var(--z-backdrop);
-  pointer-events: none;
-  /* seamless studio sweep: slightly lighter air above, a soft floor below */
-  background: linear-gradient(180deg, #b2d3e6 0%, var(--sky) 52%, #a3c8de 100%);
-}
-.hero__glow {
-  position: absolute;
-  left: 71%;
-  top: 44%;
-  width: min(72vw, 1150px);
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  background: radial-gradient(
-    closest-side,
-    rgb(222 238 247 / 0.85) 0%,
-    rgb(200 225 239 / 0.45) 45%,
-    rgb(169 205 226 / 0) 100%
-  );
-}
-/* faint horizon where the sweep turns into floor */
-.hero__floor {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 34%;
-  background: linear-gradient(180deg, rgb(150 190 214 / 0) 0%, rgb(150 190 214 / 0.3) 100%);
-}
-
-/* ------------------------------------------------------------ wordmark */
-.hero__brand {
-  position: absolute;
+/* -------------------------------------------------------------- copy */
+.hero-copy {
+  position: relative;
   z-index: var(--z-copy);
-  left: max(var(--pad), calc((100vw - var(--content-max)) / 2 + var(--pad)));
-  top: 50%;
-  transform: translateY(-58%);
+  width: min(52%, 46rem);
+  padding: clamp(1rem, 4vh, 3rem) 0 0 var(--card-pad);
 }
-.brand-type {
+.hero-copy__title {
   margin: 0;
-  color: var(--white);
-  line-height: 0.82;
-  text-shadow: 0 6px 40px rgb(60 110 145 / 0.18);
+  font-size: clamp(3.25rem, 7.2vw, 8.25rem);
+  font-weight: 500;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
 }
-.brand-type__mark {
+/* each line clips its own inner span so the entrance can slide it up from below */
+.hero-copy__line {
   display: block;
-  font-size: var(--mark-size);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  /* optical alignment: pull the round C flush with the column edge */
-  margin-left: -0.045em;
+  overflow: clip;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
 }
-.brand-type__sub {
-  display: block;
-  margin-top: calc(var(--mark-size) * 0.16);
-  font-size: calc(var(--mark-size) * 0.192);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: 0.33em;
+.hero-copy__line-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
   white-space: nowrap;
+}
+
+.avatars {
+  display: inline-flex;
+  align-items: center;
+  font-size: clamp(2.6rem, 4.4vw, 4.6rem); /* sets the avatar diameter */
+  letter-spacing: 0;
+}
+.avatars > * {
+  position: relative;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  border: 0.06em solid var(--white);
+  box-shadow: 0 6px 18px -8px rgb(20 50 90 / 0.5);
+}
+.avatars > * + * {
+  margin-left: -0.22em;
+}
+.avatars__face {
+  object-fit: cover;
+  background: var(--sky-light);
+}
+.avatars__count {
+  display: grid;
+  place-items: center;
+  background: var(--white);
+  color: var(--hero-blue);
+  font-size: 0.3em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  /* sized against its own (smaller) font, so scale back up to the avatar diameter */
+  width: 3.33em;
+  height: 3.33em;
+  border-width: 0.2em;
+}
+
+.hero-copy__intro {
+  max-width: 27rem;
+  margin: clamp(1.25rem, 3vh, 2.25rem) 0 0;
+  color: rgb(255 255 255 / 0.78);
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+  line-height: 1.5;
+}
+.hero-copy__intro strong {
+  color: var(--white);
+  font-weight: 600;
 }
 
 /* ---------------------------------------------------------- the molar */
 .hero__stage {
   position: absolute;
   z-index: var(--z-stage);
-  right: max(1vw, calc((100vw - var(--content-max)) / 2));
-  top: 10%;
-  bottom: 14%;
-  width: 46vw;
+  right: -3%;
+  top: 2%;
+  bottom: -12%;
+  width: 58%;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.hero__tooth-image {
+  width: 100%;
+  height: 100%;
+  max-width: 680px;
+  object-fit: contain;
+  filter: drop-shadow(0 25px 35px rgba(0, 20, 50, 0.22));
+  animation: tooth-float 6s ease-in-out infinite;
+  user-select: none;
+}
+
+@keyframes tooth-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(1.5deg);
+  }
+}
+
 .hero__canvas,
 .hero__still {
   position: absolute;
-  inset: -4% -4% -6% -4%;
+  inset: 0;
 }
 .hero__canvas {
   opacity: 0;
@@ -98,98 +141,157 @@
   pointer-events: none;
 }
 .hero__still {
-  width: 108%;
-  height: 110%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   opacity: 0;
   visibility: hidden;
   user-select: none;
 }
 
-/* ------------------------------------------------- tagline + scroll cue */
-.smile {
+/* ----------------------------------------- proof badge + patient photo */
+.proof {
   position: absolute;
   z-index: var(--z-copy);
-  left: 0;
-  right: 0;
-  bottom: clamp(1.25rem, 3.6vh, 2.5rem);
+  left: calc(var(--card-pad) - 1rem);
+  bottom: 0;
   display: flex;
-  justify-content: center;
+  align-items: flex-end;
   pointer-events: none;
 }
-.smile__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.9rem;
-  pointer-events: auto;
+.proof__photo {
+  position: relative;
+  height: clamp(14rem, 34vh, 26rem);
+  width: auto;
+  margin-left: -2.5rem;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 20px 30px rgb(20 50 90 / 0.25));
 }
-.smile__text {
-  margin: 0;
-  color: var(--white);
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
-  font-weight: 300;
-  letter-spacing: 0.16em;
-  text-shadow: 0 1px 12px rgb(50 95 125 / 0.25);
-}
-.scroll-cue {
+.proof__card {
+  position: relative;
+  z-index: 1;
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid rgb(255 255 255 / 0.9);
-  border-radius: 50%;
+  width: clamp(8.5rem, 11vw, 11rem);
+  aspect-ratio: 200 / 180;
+  margin-bottom: clamp(4rem, 13vh, 10rem);
   color: var(--white);
-  transition: background-color 0.3s var(--ease-out);
+  pointer-events: auto;
 }
-.scroll-cue:hover {
-  background: rgb(255 255 255 / 0.16);
+.proof[data-has-photo='false'] .proof__card {
+  margin-bottom: clamp(1.5rem, 5vh, 3rem);
 }
-.scroll-cue:focus-visible {
+.proof__shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 14px 24px rgb(20 50 90 / 0.22));
+}
+.proof__text {
+  position: relative;
+  display: grid;
+  margin: 0;
+  padding: 0 0.75rem;
+  text-align: center;
+  color: var(--hero-blue);
+}
+.proof__value {
+  font-size: clamp(2rem, 2.8vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #3f7bc0;
+}
+.proof__label {
+  margin-top: 0.35rem;
+  font-size: clamp(0.8rem, 0.9vw, 0.95rem);
+  font-weight: 500;
+  line-height: 1.25;
+  color: #3f7bc0;
+}
+
+/* ------------------------------------------ rotating consultation badge */
+.consult-wrap {
+  position: absolute;
+  z-index: 30;
+  left: 45%;
+  bottom: calc(var(--card-gap) + clamp(1rem, 3vh, 2rem));
+}
+.consult {
+  display: grid;
+  place-items: center;
+  width: var(--consult-size);
+  height: var(--consult-size);
   border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 0 20px 40px -18px rgb(20 50 90 / 0.55);
+  transition: transform 0.5s var(--ease-out);
 }
-.scroll-cue__arrow {
-  animation: cue-bob 2.8s ease-in-out infinite;
+.consult__ring {
+  position: absolute;
+  inset: 4%;
+  width: 92%;
+  height: 92%;
+  overflow: visible;
+  animation: consult-spin 18s linear infinite;
 }
-@keyframes cue-bob {
-  0%, 100% { transform: translateY(-2px); }
-  50% { transform: translateY(3px); }
+.consult__ring text {
+  fill: currentColor;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.consult__arrow {
+  width: 34%;
+  height: 34%;
+  transition: transform 0.5s var(--ease-out);
+}
+.consult:hover {
+  transform: scale(1.05);
+}
+.consult:hover .consult__arrow {
+  transform: rotate(45deg);
+}
+.consult:focus-visible {
+  outline-offset: 6px;
+}
+@keyframes consult-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* -------------------------------------------------------- tablet landscape */
 @media (max-width: 1199px) {
-  .hero {
-    --mark-size: clamp(4.5rem, 13vw, 10rem);
+  .hero-copy {
+    width: 56%;
   }
   .hero__stage {
-    width: 47vw;
-    top: 10%;
-    bottom: 18%;
+    width: 54%;
   }
 }
 
 /* ----------------------------------- mobile + portrait tablet (stacked) */
 @media (max-width: 767px), (max-width: 1199px) and (orientation: portrait) {
-  .hero {
-    --mark-size: min(23vw, 11rem);
+  .hero__card {
     display: flex;
     flex-direction: column;
-    padding-top: clamp(5.5rem, 13svh, 8.5rem);
+    min-height: auto;
   }
-  .hero__glow {
-    left: 50%;
-    top: 62%;
-    width: 140vw;
+  .hero-copy {
+    order: 1;
+    width: auto;
+    padding: 0.5rem var(--card-pad) 0;
   }
-  .hero__floor {
-    height: 30%;
+  .hero-copy__title {
+    font-size: clamp(2.9rem, 13vw, 6.5rem);
   }
-  .hero__brand {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
-    padding: 0 var(--pad);
+  .avatars {
+    font-size: clamp(2.3rem, 10vw, 4.4rem);
   }
   .hero__stage {
     position: relative;
@@ -197,27 +299,44 @@
     top: auto;
     bottom: auto;
     width: auto;
-    flex: 1 1 auto;
-    min-height: 44svh;
-    margin: 0.5rem 0 0;
+    order: 2;
+    height: clamp(18rem, 44svh, 32rem);
   }
-  .hero__canvas,
-  .hero__still {
-    inset: -2% 0 -4% 0;
-  }
-  .hero__still {
-    width: 100%;
-    height: 106%;
-  }
-  .smile {
+  .proof {
+    order: 3;
     position: relative;
-    bottom: auto;
-    padding: 0.5rem 0 clamp(1.25rem, 3svh, 2rem);
+    left: auto;
+    /* tucks the badge and patient up under the floating molar */
+    margin: -6rem 0 0 calc(var(--card-pad) - 0.5rem);
+    align-self: flex-start;
+  }
+  .proof__photo {
+    height: clamp(11rem, 26svh, 20rem);
+  }
+  .proof__card {
+    margin-bottom: 4rem;
+  }
+  .hero {
+    --consult-size: clamp(5.75rem, 16vw, 8rem);
+  }
+  .consult-wrap {
+    left: auto;
+    right: calc(var(--card-gap) + var(--card-pad) * 0.6);
+    bottom: calc(var(--card-gap) + 1.25rem);
+  }
+}
+@media (max-width: 420px) {
+  .hero-copy__line-inner {
+    white-space: normal;
+    flex-wrap: wrap;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scroll-cue__arrow {
+  .consult__ring {
+    animation: none;
+  }
+  .hero__tooth-image {
     animation: none;
   }
 }

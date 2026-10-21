@@ -1,7 +1,9 @@
 # Crown Dental Group — 3D hero
 
-React + Vite site whose hero is a powder-blue studio with an oversized white wordmark and a
-single, giant glossy molar rendered live with React Three Fiber, choreographed with GSAP + ScrollTrigger.
+React + Vite site whose hero is a rounded blue card — nav with a "Contacts" pill, a large
+"Restore Your True Smile" headline with an avatar stack, a wavy proof badge beside a patient
+cut-out, a rotating lime "Book your consultation" badge — and a single, giant glossy molar
+rendered live with React Three Fiber, choreographed with GSAP + ScrollTrigger.
 
 ```bash
 npm install
@@ -11,9 +13,15 @@ npm run build      # production build → dist/
 
 ## Branding & clinic details
 
-Everything lives in `src/config/brand.js` (`BRAND`): wordmark (`CROWN`), subtitle
-(`DENTAL GROUP`), full name, tagline, nav links and the booking link. Contact details
-are rendered **only when filled in** — nothing is invented.
+Everything lives in `src/config/brand.js` (`BRAND`): name, nav links, the nav CTA pill,
+the booking link (used by the rotating badge), hero headline/intro and social proof.
+Contact details are rendered **only when filled in**.
+
+- `proof` (98% stat, `+2k` count, avatar photos) ships with **placeholder values and
+  randomuser.me portraits** — replace them with real figures and consented patient photos,
+  or set a field to `null` to hide it.
+- `hero.patient` points to `public/images/patient.png`: a transparent cut-out of a happy
+  patient (about 3:4, subject touching the bottom edge). It stays hidden until the file exists.
 
 ## The 3D asset
 

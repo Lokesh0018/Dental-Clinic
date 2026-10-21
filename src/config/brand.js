@@ -1,26 +1,51 @@
 /**
  * Single source of truth for the clinic's identity. Change it here and the
- * navigation, wordmark, page title text and booking links all follow.
+ * navigation, hero copy and booking links all follow.
  * Anything left as `null` is not rendered — nothing is invented.
  */
 export const BRAND = {
-  wordmark: 'CROWN',
-  subtitle: 'DENTAL GROUP',
   name: 'Crown Dental Group',
-  tagline: 'brighten your smile',
+  shortName: 'CrownDental',
 
   nav: [
-    { label: 'Home', href: '#top' },
     { label: 'About', href: '#about' },
     { label: 'Services', href: '#services' },
-    { label: 'Contact Us', href: '#contact' },
+    { label: 'Contact', href: '#contact' },
   ],
 
+  // White pill in the top-right corner of the hero card.
+  navCta: { label: 'Contacts', href: '#contact' },
+
   booking: {
-    label: 'Book Online',
+    label: 'Book your consultation',
     // Internal anchor or an external online-booking URL.
     href: '#contact',
     external: false,
+  },
+
+  hero: {
+    // One entry per line of the headline; the avatar stack sits after the last line.
+    headline: ['Restore', 'Your True', 'Smile'],
+    // **double asterisks** mark the words rendered in bright white.
+    intro: 'Using **advanced technology**, we deliver comprehensive treatments for a healthy, **confident smile.**',
+
+    // Cut-out (transparent PNG/WebP) photo of a happy patient, bottom-left of the hero.
+    // Hidden automatically until the file exists.
+    patient: { src: '/images/patient.png', alt: 'A smiling patient celebrating with both fists raised' },
+  },
+
+  /*
+   * Social proof shown in the hero. PLACEHOLDERS — replace with your real figures and
+   * your own patients' photos (with consent), or set a field to null to hide it.
+   */
+  proof: {
+    stat: { value: '98%', label: 'loyal dental patients' },
+    avatars: [
+      { src: 'https://randomuser.me/api/portraits/women/44.jpg' },
+      { src: 'https://randomuser.me/api/portraits/women/68.jpg' },
+    ],
+    count: '+2k',
+    countLabel: 'more than 2,000 happy patients',
   },
 
   contact: {
