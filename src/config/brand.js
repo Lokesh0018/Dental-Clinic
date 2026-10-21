@@ -31,6 +31,10 @@ export const BRAND = {
     // Ghost button beside the booking CTA.
     secondary: { label: 'Explore services', href: '#services' },
 
+    // Hero animation: numbered frames in /public, played as a seamless loop.
+    sequence: { path: '/frames_Fix/frame_', start: 11, count: 61, pad: 6, ext: '.webp', fps: 24 },
+    sequenceLabel: 'Miniature dentists polishing and treating a giant tooth implant',
+
     // Cut-out (transparent PNG/WebP) photo of a happy patient, bottom-left of the hero.
     // Hidden automatically until the file exists.
     patient: { src: '/images/patient.png', alt: 'A smiling patient celebrating with both fists raised' },

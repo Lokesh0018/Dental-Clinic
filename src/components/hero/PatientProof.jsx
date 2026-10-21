@@ -26,7 +26,12 @@ export default function PatientProof() {
         <div className="proof__card" data-hero="stat">
           <WavyCard />
           <p className="proof__text">
-            <strong className="proof__value">{stat.value}</strong>
+            <strong className="proof__value">
+              <span aria-hidden="true" data-count>
+                {stat.value}
+              </span>
+              <span className="visually-hidden">{stat.value}</span>
+            </strong>
             <span className="proof__label">{stat.label}</span>
           </p>
         </div>

@@ -6,8 +6,11 @@
   --ink: #17344a;
   --ink-soft: #3e5a6d;
   --white: #ffffff;
-  --hero-blue: #5b92d1;
-  --hero-blue-light: #7aaee3;
+  /* text side passes 4.5:1 with white; the tooth side stays lighter for the crew */
+  --hero-blue: #3a72c0;
+  --hero-blue-mid: #3f78c5;
+  --hero-blue-light: #4a83cf;
+  --proof-ink: #2d5f9a;
   --lime: #e2f36b;
 
   --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -139,15 +142,37 @@ a {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  color: rgb(255 255 255 / 0.72);
+  color: rgb(255 255 255 / 0.86);
   font-size: 0.98rem;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.25s var(--ease-out);
 }
-.nav__links li:first-child a,
-.nav__links a:hover {
+.nav__links a {
+  position: relative;
+}
+/* underline grows from the left on hover / keyboard focus, retracts to the right */
+.nav__links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.55rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s var(--ease-out);
+}
+.nav__links a:hover,
+.nav__links a:focus-visible {
   color: var(--white);
+}
+.nav__links a:hover::after,
+.nav__links a:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 
 /* white "Contacts" pill with a lime arrow dot */
@@ -178,6 +203,10 @@ a {
 }
 .pill:hover {
   transform: translateY(-1px);
+}
+.pill:active {
+  transform: translateY(1px) scale(0.98);
+  transition-duration: 0.12s;
 }
 .pill:hover .pill__dot {
   transform: rotate(45deg);
@@ -256,6 +285,10 @@ a {
   border-radius: 0.75rem;
   font-weight: 500;
   text-decoration: none;
+}
+.nav__panel a:focus-visible {
+  outline-color: var(--ink);
+  outline-offset: -2px;
 }
 .nav__panel a:hover {
   background: var(--paper);

@@ -1,6 +1,6 @@
 /* =====================================================================
    Hero — rounded blue card: nav, big headline + avatar stack, proof
-   badge with a patient cut-out, a giant 3D molar, rotating lime badge
+   badge with a patient cut-out, a looping frame-sequence scene, rotating lime badge
    ===================================================================== */
 .hero {
   --consult-size: clamp(6.5rem, 9.5vw, 9.5rem);
@@ -9,6 +9,12 @@
   background: var(--paper);
 }
 
+/* white focus rings read on every part of the blue card */
+.hero__card :focus-visible,
+.consult:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
 .hero__card {
   position: relative;
   min-height: calc(100svh - var(--card-gap) * 2);
@@ -18,7 +24,7 @@
   color: var(--white);
   background:
     radial-gradient(60% 70% at 72% 40%, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 70%),
-    linear-gradient(160deg, var(--hero-blue-light) 0%, var(--hero-blue) 55%, #5089ca 100%);
+    linear-gradient(100deg, var(--hero-blue) 0%, var(--hero-blue) 38%, var(--hero-blue-mid) 55%, var(--hero-blue-light) 100%);
 }
 
 /* -------------------------------------------------------------- copy */
@@ -87,7 +93,7 @@
 .hero-copy__intro {
   max-width: 27rem;
   margin: clamp(1.25rem, 3vh, 2.25rem) 0 0;
-  color: rgb(255 255 255 / 0.78);
+  color: var(--white);
   font-size: clamp(1rem, 1.2vw, 1.2rem);
   line-height: 1.5;
 }
@@ -113,9 +119,15 @@
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.25s var(--ease-out), border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  transition: background-color 0.25s var(--ease-out), border-color 0.25s, color 0.25s, box-shadow 0.25s, transform 0.15s var(--ease-out);
+}
+.btn:active {
+  transform: translateY(1px) scale(0.98);
 }
 .btn--primary {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background: var(--white);
   color: var(--ink);
   box-shadow: 0 12px 30px -12px rgb(20 50 90 / 0.5);
@@ -130,124 +142,56 @@
 .btn--primary:hover svg {
   transform: rotate(45deg);
 }
+/* one-shot sheen across the primary CTA on hover */
+.btn--primary::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: -1;
+  width: 45%;
+  background: linear-gradient(100deg, rgb(255 255 255 / 0), rgb(255 255 255 / 0.85), rgb(255 255 255 / 0));
+  transform: translateX(-120%) skewX(-16deg);
+}
+.btn--primary:hover::before {
+  transform: translateX(260%) skewX(-16deg);
+  transition: transform 0.7s var(--ease-out);
+}
 .btn--ghost {
-  border: 1px solid rgb(255 255 255 / 0.45);
+  border: 1.5px solid rgb(255 255 255 / 0.8);
+  /* faint navy tint keeps the label at ≥4.5:1 wherever the gradient lightens */
+  background: rgb(18 52 112 / 0.22);
   color: var(--white);
 }
 .btn--ghost:hover {
   border-color: var(--white);
-  background: rgb(255 255 255 / 0.12);
+  background: rgb(18 52 112 / 0.38);
 }
 
-/* ---------------------------------------------------------- the molar */
+/* ------------------------------------------------- frame-sequence scene */
 .hero__stage {
   position: absolute;
   z-index: var(--z-stage);
-  right: -3%;
+  /* bleeds to the card's right and bottom edges (the card clips); top stays below the nav */
+  right: 0;
   top: clamp(5.5rem, 11%, 8rem);
   bottom: 0;
-  width: 58%;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  container-type: size;
-  perspective: 1200px;
-}
-/* soft light behind the tooth */
-.hero__glow {
-  position: absolute;
-  left: 50%;
-  top: 52%;
-  width: 115%;
-  aspect-ratio: 1;
-  translate: -50% -50%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.08) 45%, rgb(255 255 255 / 0) 72%);
-}
-/*
- * The tooth PNG (500×500) plus 70px of headroom for the dentists standing on top: the rig
- * is 500×570, the image sits at its bottom and the crew SVG uses viewBox "0 -70 500 570",
- * so the drawing lines up with the enamel at any size.
- */
-.tooth-rig {
-  position: relative;
-  width: min(100cqw, calc(100cqh * 500 / 570), 680px);
-  aspect-ratio: 500 / 570;
-}
-.tooth-rig__tilt {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.tooth-rig__float {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  animation: tooth-float 6s ease-in-out infinite;
-}
-/* ground shadow: breathes opposite to the float so the tooth reads as hovering */
-.tooth-rig__shadow {
-  position: absolute;
-  left: 22%;
-  right: 14%;
-  bottom: -5%;
-  height: 7%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(10 40 90 / 0.32), rgb(10 40 90 / 0) 100%);
-  animation: shadow-breathe 6s ease-in-out infinite;
-}
-@keyframes shadow-breathe {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.9); opacity: 0.7; }
-}
-.hero__tooth-image {
-  position: absolute;
-  inset: auto 0 0 0;
-  width: 100%;
-  height: calc(100% * 500 / 570);
-  object-fit: contain;
-  filter: drop-shadow(0 25px 35px rgba(0, 20, 50, 0.22));
-  user-select: none;
-}
-.tooth-crew {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 1.5px 1.5px rgb(10 40 90 / 0.28));
-}
-
-@keyframes tooth-float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-16px) rotate(1.5deg);
-  }
-}
-
-.hero__canvas,
-.hero__still {
-  position: absolute;
-  inset: 0;
-}
-.hero__canvas {
-  opacity: 0;
-  visibility: hidden;
-}
-.hero__canvas canvas {
+  width: 60%;
   pointer-events: none;
 }
-.hero__still {
+/* frame-sequence scene: canvas fills the stage; uniform scaling happens inside FrameSequence */
+.hero__frames {
+  position: absolute;
+  inset: 0;
+}
+.hero__frames-canvas {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
   opacity: 0;
-  visibility: hidden;
-  user-select: none;
+  transition: opacity 0.8s var(--ease-out);
+}
+.hero__frames-canvas[data-ready] {
+  opacity: 1;
 }
 
 /* ----------------------------------------- proof badge + patient photo */
@@ -303,21 +247,22 @@
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
-  color: #3f7bc0;
+  color: var(--proof-ink);
 }
 .proof__label {
   margin-top: 0.35rem;
   font-size: clamp(0.8rem, 0.9vw, 0.95rem);
   font-weight: 500;
   line-height: 1.25;
-  color: #3f7bc0;
+  color: var(--proof-ink);
 }
 
 /* ------------------------------------------ rotating consultation badge */
 .consult-wrap {
   position: absolute;
   z-index: 30;
-  left: 45%;
+  /* below the CTA row, clear of the scene's centrepiece */
+  left: 26%;
   bottom: calc(var(--card-gap) + clamp(1rem, 3vh, 2rem));
 }
 .consult {
@@ -402,6 +347,10 @@
     display: flex;
     flex-direction: column;
     min-height: auto;
+    /* stacked: copy is on top, so the deep blue runs top → bottom instead of left → right */
+    background:
+      radial-gradient(80% 45% at 50% 68%, rgb(255 255 255 / 0.16) 0%, rgb(255 255 255 / 0) 70%),
+      linear-gradient(180deg, var(--hero-blue) 0%, var(--hero-blue) 42%, var(--hero-blue-light) 100%);
   }
   .hero-copy {
     order: 1;
@@ -421,14 +370,16 @@
     bottom: auto;
     width: auto;
     order: 2;
-    height: clamp(18rem, 44svh, 32rem);
+    /* the fit window (1470×1080 source px) plus ~150px of headroom for the soft top fade */
+    height: auto;
+    aspect-ratio: 1470 / 1230;
     margin-top: 1rem;
   }
   .proof {
     order: 3;
     position: relative;
     left: auto;
-    /* tucks the badge and patient up under the floating molar */
+    /* tucks the badge and patient up under the scene */
     margin: -6rem 0 0 calc(var(--card-pad) - 0.5rem);
     align-self: flex-start;
   }
@@ -454,12 +405,16 @@
   }
 }
 
+/* off-screen: pause looping CSS animation (the frame sequence is paused in JS) */
+.hero[data-paused] .consult__ring {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .consult__ring {
-    animation: none;
+  .btn--primary::before {
+    display: none;
   }
-  .tooth-rig__float,
-  .tooth-rig__shadow {
+  .consult__ring {
     animation: none;
   }
 }
