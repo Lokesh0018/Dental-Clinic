@@ -1,0 +1,433 @@
+/* =====================================================================
+   About — intro + studio promise panel, four value cards, first-visit steps.
+   Same language as the hero: ink text, lime accent chips, the studio cyan,
+   frosted white cards. Nothing here is clickable except real links/buttons.
+   ===================================================================== */
+.about {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  background: var(--paper);
+}
+/* ambient backdrop: faint dot grid + two slow-drifting sky blobs + a white veil
+   that fades the hero card's shadow in at the top. Purely decorative. */
+.about::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / 0.9) 0%, rgb(255 255 255 / 0) 22%, rgb(255 255 255 / 0) 85%, rgb(255 255 255 / 0.6) 100%),
+    radial-gradient(rgb(23 52 74 / 0.09) 1px, transparent 1.5px);
+  background-size: 100% 100%, 28px 28px;
+  background-position: 0 0, 14px 14px;
+  /* fade the dots out toward the edges so they never fight the content */
+  -webkit-mask-image: radial-gradient(70% 70% at 50% 45%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(70% 70% at 50% 45%, #000 40%, transparent 100%);
+}
+.about::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 38% at 86% 18%, rgb(169 205 226 / 0.55), transparent 70%),
+    radial-gradient(36% 34% at 8% 62%, rgb(207 228 240 / 0.7), transparent 70%),
+    radial-gradient(30% 26% at 70% 92%, rgb(226 243 107 / 0.22), transparent 70%);
+  filter: blur(40px);
+  animation: about-ambient 18s ease-in-out infinite alternate;
+}
+@keyframes about-ambient {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(-2%, 2%, 0) scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------- intro */
+.about__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+.about__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.9rem 0.45rem 0.7rem;
+  border: 1px solid rgb(23 52 74 / 0.1);
+  border-radius: 999px;
+  background: var(--white);
+  letter-spacing: 0.18em;
+}
+.about__eyebrow-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 3px rgb(226 243 107 / 0.35);
+}
+.about__intro .section__lede {
+  margin-bottom: 2.25rem;
+}
+.about__trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  margin: 2.25rem 0 0;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid rgb(23 52 74 / 0.1);
+  list-style: none;
+}
+.about__trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.about__trust svg {
+  flex-shrink: 0;
+  padding: 0.2rem;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+}
+.about__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+}
+.about__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.75rem;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.35em;
+  text-decoration-color: rgb(23 52 74 / 0.35);
+  transition: text-decoration-color 0.2s var(--ease-out);
+}
+.about__link svg {
+  transition: transform 0.3s var(--ease-out);
+}
+.about__link:hover {
+  text-decoration-color: currentColor;
+}
+.about__link:hover svg {
+  transform: rotate(45deg);
+}
+.about :focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------ stage
+   The heart PNG cropped tight, floating over a soft sky glow, with three
+   small frosted "mineral" bubbles drifting around it. Motion is pure CSS
+   (transform only) and switches off under prefers-reduced-motion. */
+.about__promise {
+  --stage: 26rem;
+  margin: 0;
+  color: var(--ink);
+}
+.about__stage {
+  position: relative;
+  width: min(100%, var(--stage));
+  margin-inline: auto;
+  aspect-ratio: 1.08 / 1;
+  isolation: isolate;
+}
+/* soft glow so the heart doesn't sit flat on the paper */
+.about__stage::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 8% 4%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(169 205 226 / 0.55), rgb(169 205 226 / 0.18) 60%, transparent);
+  filter: blur(18px);
+}
+/* the PNG is 16:9 with the heart in the middle ~57% — crop to that */
+.about__promise-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: drop-shadow(0 26px 34px rgb(23 52 74 / 0.16));
+}
+.about__bubble {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 17%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(110% 110% at 35% 25%, rgb(255 255 255 / 0.95) 0%, rgb(236 245 251 / 0.78) 55%, rgb(190 218 236 / 0.6) 100%);
+  box-shadow:
+    0 14px 28px rgb(23 52 74 / 0.12),
+    0 2px 5px rgb(23 52 74 / 0.06),
+    inset 0 1px 1px rgb(255 255 255 / 1),
+    inset 0 -8px 14px rgb(143 182 207 / 0.3);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  color: #4f7189;
+  line-height: 1;
+  pointer-events: none;
+  animation: about-float var(--dur, 5s) ease-in-out var(--delay, 0s) infinite;
+}
+.about__bubble-symbol {
+  font-size: calc(var(--stage) * 0.062);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.about__bubble-label {
+  margin-top: 0.45em;
+  font-size: calc(var(--stage) * 0.018);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.about__bubble--f  { top: 5%;  right: 6%;  --dur: 5.2s; --delay: 0s; }
+.about__bubble--ca { top: 54%; left: 2%;   --dur: 6.1s; --delay: -2s; }
+.about__bubble--p  { top: 74%; left: 22%;  --dur: 4.6s; --delay: -1s; width: 10%; }
+.about__bubble--p .about__bubble-symbol { font-size: calc(var(--stage) * 0.045); }
+
+@keyframes about-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%      { transform: translate3d(4px, -12px, 0) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about__bubble {
+    animation: none;
+  }
+}
+@media (max-width: 36rem) {
+  .about__promise { --stage: min(100vw - 2 * var(--pad), 22rem); }
+}
+
+/* ------------------------------------------------------------ values */
+.about__head {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 46ch;
+  margin: clamp(4.5rem, 9vw, 7rem) 0 clamp(1.75rem, 3vw, 2.5rem);
+}
+.about__head--tight {
+  margin-top: 0;
+}
+.about__kicker {
+  margin: 0;
+  color: var(--proof-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.about__subhead {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.about__head-lede {
+  margin: 0.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+.about__values {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.875rem, 1.6vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.about__value {
+  position: relative;
+  padding: clamp(1.5rem, 2.2vw, 2rem);
+  border: 1px solid rgb(23 52 74 / 0.08);
+  border-radius: 1.5rem;
+  background: var(--white);
+  box-shadow: 0 18px 40px -30px rgb(20 50 90 / 0.45);
+  overflow: hidden;
+  transition: box-shadow 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+}
+/* sky wash in the corner, brightens on hover */
+.about__value::before {
+  content: '';
+  position: absolute;
+  inset: auto -30% -40% auto;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(169 205 226 / 0.35), transparent);
+  opacity: 0.7;
+  transition: opacity 0.3s var(--ease-out);
+  pointer-events: none;
+}
+.about__value:hover {
+  border-color: rgb(23 52 74 / 0.16);
+  box-shadow: 0 26px 50px -28px rgb(20 50 90 / 0.6);
+}
+.about__value:hover::before {
+  opacity: 1;
+}
+.about__value-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.about__value-index {
+  color: rgb(23 52 74 / 0.35);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+}
+.about__icon {
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+  box-shadow: 0 0 0 5px rgb(226 243 107 / 0.3);
+}
+.about__value h4,
+.about__step h4 {
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.about__value p,
+.about__step p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------- first-visit steps */
+.about__steps-panel {
+  position: relative;
+  margin-top: clamp(4.5rem, 9vw, 7rem);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: clamp(1.5rem, 2.6vw, 2.25rem);
+  background:
+    radial-gradient(60% 90% at 100% 0%, rgb(255 255 255 / 0.7), transparent 60%),
+    linear-gradient(135deg, var(--sky-light), rgb(207 228 240 / 0.55));
+  box-shadow: 0 0 0 1px rgb(23 52 74 / 0.05), 0 30px 60px -40px rgb(20 50 90 / 0.5);
+}
+.about__steps-wrap {
+  position: relative;
+}
+/* connector running through the step numbers */
+.about__steps-line {
+  position: absolute;
+  left: 1.5rem;
+  right: calc(100% / 3 - 1.5rem);
+  top: 1.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, var(--ink), rgb(23 52 74 / 0.15));
+  transform-origin: left;
+}
+.about__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.about__step-num {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1.25rem;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--white); /* masks the connector behind the circle */
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.about__step:first-child .about__step-num {
+  border-color: var(--ink);
+  background: var(--lime);
+}
+.about__step p {
+  max-width: 34ch;
+}
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 1023px) {
+  .about__top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .about__values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* steps go vertical, connector runs down through the numbers */
+@media (max-width: 767px) {
+  .about__steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+  .about__step {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 1.25rem;
+  }
+  .about__step-num {
+    grid-row: span 2;
+    margin-bottom: 0;
+  }
+  /* stacked: one segment per gap, from a circle to the next, so the line ends exactly at 03 */
+  .about__steps-line {
+    display: none;
+  }
+  .about__step {
+    position: relative;
+  }
+  .about__step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: calc(1.5rem - 1px);
+    top: 3rem;
+    bottom: -2rem;
+    width: 2px;
+    background: rgb(23 52 74 / 0.35);
+  }
+}
+@media (max-width: 599px) {
+  .about__values {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
