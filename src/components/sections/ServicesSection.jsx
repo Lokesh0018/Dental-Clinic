@@ -12,43 +12,86 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 /* Icons: 24×24, 2px strokes (Lucide geometry, ISC licence). */
 const icon = { viewBox: '0 0 24 24', width: 24, height: 24, fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true, focusable: false };
 
+/* a shared molar outline, so every tooth-based icon has the same silhouette */
+const TOOTH =
+  'M12 5.3c-1.6-1.5-4.1-2-6.1-1C3.4 5.6 2.9 8.8 3.9 11.3c1 2.8 2 6 2.5 9 .3 1.4 2 1.6 2.6.3L11 15.8c.4-.8 1.6-.8 2 0l2 4.8c.6 1.3 2.3 1.1 2.6-.3.5-3 1.5-6.2 2.5-9 1-2.5.5-5.7-2-7-2-1-4.5-.5-6.1 1z';
+
 const ICONS = {
-  shield: (
+  /* tooth with the canal traced down the centre */
+  rootCanal: (
     <svg {...icon}>
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+      <path d={TOOTH} />
+      <path d="M12 8.5v6" strokeDasharray="1.5 2" />
     </svg>
   ),
-  wrench: (
+  /* crown on a threaded titanium post */
+  implants: (
     <svg {...icon}>
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+      <path d="M8 3h8a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+      <path d="M10 8v10.5a2 2 0 0 0 4 0V8" />
+      <path d="M10 11h4M10 14h4M10 17h4" />
     </svg>
   ),
-  sparkle: (
+  /* dental arch wrapped in a clear tray */
+  aligners: (
     <svg {...icon}>
-      <path d="M9.9 3.2 11.2 7a2 2 0 0 0 1.3 1.3l3.8 1.3a.5.5 0 0 1 0 .9l-3.8 1.3A2 2 0 0 0 11.2 13l-1.3 3.8a.5.5 0 0 1-.9 0L7.7 13a2 2 0 0 0-1.3-1.3L2.6 10.5a.5.5 0 0 1 0-.9l3.8-1.3A2 2 0 0 0 7.7 7L9 3.2a.5.5 0 0 1 .9 0z" />
-      <path d="M18 2v4M20 4h-4M19 16v4M21 18h-4" />
+      <path d="M4 12V11a8 8 0 0 1 16 0v1" />
+      <path d="M4 12c0 3.3 3.6 5 8 5s8-1.7 8-5" />
+      <path d="M8.5 6.5V15M12 4.5V16M15.5 6.5V15" strokeOpacity="0.55" />
+    </svg>
+  ),
+  /* tooth with a sparkle: design, not just repair */
+  smile: (
+    <svg {...icon}>
+      <path d={TOOTH} />
+      <path d="M18.5 2.5v4M16.5 4.5h4" />
+    </svg>
+  ),
+  /* Lucide "crown" */
+  crowns: (
+    <svg {...icon}>
+      <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" />
+      <path d="M5 21h14" />
     </svg>
   ),
 };
 
+const CheckIcon = () => (
+  <svg {...icon} width={14} height={14} strokeWidth={3}>
+    <path d="m5 12 4.5 4.5L19 7" />
+  </svg>
+);
+
 const SERVICES = [
   {
-    icon: 'shield',
-    title: 'Preventive care',
-    body: 'Thorough examinations and gentle hygiene visits that keep small concerns from becoming larger ones.',
-    includes: ['Check-ups', 'Hygiene & cleaning', 'Digital X-rays'],
+    icon: 'rootCanal',
+    title: 'Root Canal',
+    body: 'Gentle, pain-free endodontic therapy designed to save and preserve your natural tooth while eliminating infection.',
+    includes: ['Single-visit options', 'Digital apex locator', 'Pain-free anaesthesia'],
   },
   {
-    icon: 'wrench',
-    title: 'Restorative dentistry',
-    body: 'Fillings, crowns and bridges planned with precision and finished to blend naturally with your smile.',
-    includes: ['Fillings', 'Crowns & bridges', 'Root canal care'],
+    icon: 'implants',
+    title: 'Dental Implants',
+    body: 'Permanent titanium and zirconia tooth replacements that look, feel, and function just like natural teeth.',
+    includes: ['Full-arch solutions', 'Computer-guided placement', 'Natural aesthetics'],
   },
   {
-    icon: 'sparkle',
-    title: 'Cosmetic dentistry',
-    body: 'Whitening and smile design guided by proportion and restraint, so results look like you — only brighter.',
-    includes: ['Whitening', 'Veneers', 'Smile design'],
+    icon: 'aligners',
+    title: 'Clear Aligners',
+    body: 'Discreet, comfortable transparent trays that straighten your teeth seamlessly without brackets or metal wires.',
+    includes: ['Custom 3D scan', 'Virtually invisible', 'Removable convenience'],
+  },
+  {
+    icon: 'smile',
+    title: 'Smile Designing',
+    body: 'Bespoke aesthetic smile transformations combining proportions, facial symmetry, veneers, and whitening.',
+    includes: ['Digital smile simulation', 'Porcelain veneers', 'Enamel reshaping'],
+  },
+  {
+    icon: 'crowns',
+    title: 'Zirconia Crowns',
+    body: 'Ultra-durable, lifelike biocompatible crowns that restore strength, function, and aesthetic perfection.',
+    includes: ['Metal-free biocompatibility', 'High fracture resistance', 'Precision CAD/CAM fit'],
   },
 ];
 
@@ -94,23 +137,29 @@ export default function ServicesSection() {
 
         <ul className="services__grid">
           {SERVICES.map((s, i) => (
-            <li key={s.title} className="services__card">
+            <li key={s.title} className={`services__card${i === 0 ? ' services__card--featured' : ''}`}>
+              <span className="services__watermark" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
               <div className="services__card-top">
                 <span className="services__icon">{ICONS[s.icon]}</span>
-                <span className="services__index" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
+                {i === 0 && <span className="services__badge">Most requested</span>}
               </div>
               <h3>{s.title}</h3>
               <p>{s.body}</p>
               <ul className="services__includes" aria-label={`${s.title} includes`}>
                 {s.includes.map((t) => (
-                  <li key={t}>{t}</li>
+                  <li key={t}>
+                    <CheckIcon />
+                    {t}
+                  </li>
                 ))}
               </ul>
               <a className="services__link" href={BRAND.booking.href} {...bookingLinkProps}>
-                Ask about {s.title.toLowerCase()}
-                <ArrowIcon />
+                <span>Ask about {s.title.toLowerCase()}</span>
+                <span className="services__link-dot" aria-hidden="true">
+                  <ArrowIcon />
+                </span>
               </a>
             </li>
           ))}
