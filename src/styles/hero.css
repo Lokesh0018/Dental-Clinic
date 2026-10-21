@@ -9,10 +9,10 @@
   background: var(--paper);
 }
 
-/* white focus rings read on every part of the blue card */
+/* ink focus rings read on every part of the light studio backdrop */
 .hero__card :focus-visible,
 .consult:focus-visible {
-  outline: 2px solid var(--white);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
 .hero__card {
@@ -21,10 +21,16 @@
   border-radius: clamp(1.25rem, 2.6vw, 2.5rem);
   overflow: clip;
   isolation: isolate;
-  color: var(--white);
+  /* text is ink: white fails on this light backdrop (1.1–2.5:1), ink gives 5.1–11.7:1 */
+  color: var(--ink);
+  /*
+   * The frames' own studio backdrop, sampled from the fitted background plate
+   * (tools/key-frames.py): a centre column brightening from #8ad9ed at the top to #bafffc at the
+   * bottom, with edges that darken toward the top (top-left corner #62adc9).
+   */
   background:
-    radial-gradient(60% 70% at 72% 40%, rgb(255 255 255 / 0.2) 0%, rgb(255 255 255 / 0) 70%),
-    linear-gradient(100deg, var(--hero-blue) 0%, var(--hero-blue) 38%, var(--hero-blue-mid) 55%, var(--hero-blue-light) 100%);
+    radial-gradient(75% 140% at 50% 100%, rgb(98 173 201 / 0) 55%, rgb(98 173 201 / 0.62) 100%),
+    linear-gradient(180deg, #8ad9ed 0%, #93e0f3 10%, #9de8fa 25%, #aaf4ff 50%, #b0f9ff 75%, #bafffc 100%);
 }
 
 /* -------------------------------------------------------------- copy */
@@ -93,13 +99,13 @@
 .hero-copy__intro {
   max-width: 27rem;
   margin: clamp(1.25rem, 3vh, 2.25rem) 0 0;
-  color: var(--white);
+  color: var(--ink);
   font-size: clamp(1rem, 1.2vw, 1.2rem);
   line-height: 1.5;
 }
 .hero-copy__intro strong {
-  color: var(--white);
-  font-weight: 600;
+  color: var(--ink);
+  font-weight: 700;
 }
 .hero-copy__actions {
   display: flex;
@@ -128,8 +134,8 @@
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: var(--white);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--white);
   box-shadow: 0 12px 30px -12px rgb(20 50 90 / 0.5);
 }
 .btn--primary svg {
@@ -137,6 +143,7 @@
 }
 .btn--primary:hover {
   background: var(--lime);
+  color: var(--ink);
   box-shadow: 0 16px 34px -12px rgb(20 50 90 / 0.55);
 }
 .btn--primary:hover svg {
@@ -157,14 +164,13 @@
   transition: transform 0.7s var(--ease-out);
 }
 .btn--ghost {
-  border: 1.5px solid rgb(255 255 255 / 0.8);
-  /* faint navy tint keeps the label at ≥4.5:1 wherever the gradient lightens */
-  background: rgb(18 52 112 / 0.22);
-  color: var(--white);
+  border: 1.5px solid rgb(23 52 74 / 0.85);
+  background: rgb(255 255 255 / 0.3);
+  color: var(--ink);
 }
 .btn--ghost:hover {
-  border-color: var(--white);
-  background: rgb(18 52 112 / 0.38);
+  border-color: var(--ink);
+  background: rgb(255 255 255 / 0.6);
 }
 
 /* ------------------------------------------------- frame-sequence scene */
@@ -216,45 +222,77 @@
 .proof__card {
   position: relative;
   z-index: 1;
-  display: grid;
-  place-items: center;
-  width: clamp(8.5rem, 11vw, 11rem);
-  aspect-ratio: 200 / 180;
+  width: clamp(11rem, 13vw, 13.5rem);
   margin-bottom: clamp(4rem, 13vh, 10rem);
-  color: var(--white);
+  padding: 0.95rem 1.05rem 1.05rem;
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: 1.25rem;
+  /* frosted white, same language as the floating nav */
+  background: rgb(255 255 255 / 0.86);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    0 0 0 1px rgb(23 52 74 / 0.05),
+    0 18px 40px -20px rgb(20 50 90 / 0.5);
+  color: var(--ink);
   pointer-events: auto;
 }
 .proof[data-has-photo='false'] .proof__card {
   margin-bottom: clamp(1.5rem, 5vh, 3rem);
 }
-.proof__shape {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 14px 24px rgb(20 50 90 / 0.22));
-}
 .proof__text {
-  position: relative;
   display: grid;
+  gap: 0.3rem;
   margin: 0;
-  padding: 0 0.75rem;
-  text-align: center;
-  color: var(--hero-blue);
+}
+.proof__head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.proof__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
 }
 .proof__value {
-  font-size: clamp(2rem, 2.8vw, 2.9rem);
+  font-size: clamp(1.9rem, 2.4vw, 2.5rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
-  color: var(--proof-ink);
+  font-variant-numeric: tabular-nums; /* digits keep their width while counting up */
+  color: var(--ink);
+}
+/* copying the card yields "98%" once, not the screen-reader copy as well */
+.proof__sr {
+  user-select: none;
 }
 .proof__label {
-  margin-top: 0.35rem;
-  font-size: clamp(0.8rem, 0.9vw, 0.95rem);
+  font-size: clamp(0.84rem, 0.9vw, 0.95rem);
   font-weight: 500;
-  line-height: 1.25;
-  color: var(--proof-ink);
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+.proof__meter {
+  display: block;
+  height: 0.375rem;
+  margin-top: 0.75rem;
+  border-radius: 999px;
+  background: rgb(23 52 74 / 0.1);
+  overflow: hidden;
+}
+.proof__meter-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--proof-ink), var(--ink));
+  transform: scaleX(var(--value, 1));
+  transform-origin: left;
 }
 
 /* ------------------------------------------ rotating consultation badge */
@@ -326,7 +364,7 @@
     margin-top: 1.25rem;
   }
   .proof[data-has-photo='false'] .proof__card {
-    width: clamp(7.5rem, 9vw, 9rem);
+    width: clamp(11.75rem, 13vw, 12.5rem); /* keeps the label on one line */
     margin-bottom: 1rem;
   }
 }
@@ -347,10 +385,6 @@
     display: flex;
     flex-direction: column;
     min-height: auto;
-    /* stacked: copy is on top, so the deep blue runs top → bottom instead of left → right */
-    background:
-      radial-gradient(80% 45% at 50% 68%, rgb(255 255 255 / 0.16) 0%, rgb(255 255 255 / 0) 70%),
-      linear-gradient(180deg, var(--hero-blue) 0%, var(--hero-blue) 42%, var(--hero-blue-light) 100%);
   }
   .hero-copy {
     order: 1;
@@ -370,9 +404,9 @@
     bottom: auto;
     width: auto;
     order: 2;
-    /* the fit window (1470×1080 source px) plus ~150px of headroom for the soft top fade */
+    /* the cut-out frames' own proportions (1274×1040): nothing cropped, no empty band */
     height: auto;
-    aspect-ratio: 1470 / 1230;
+    aspect-ratio: 1274 / 1040;
     margin-top: 1rem;
   }
   .proof {

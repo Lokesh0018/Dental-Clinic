@@ -6,10 +6,8 @@
   --ink: #17344a;
   --ink-soft: #3e5a6d;
   --white: #ffffff;
-  /* text side passes 4.5:1 with white; the tooth side stays lighter for the crew */
+  /* accent blue for small text on white (avatar count, proof card) */
   --hero-blue: #3a72c0;
-  --hero-blue-mid: #3f78c5;
-  --hero-blue-light: #4a83cf;
   --proof-ink: #2d5f9a;
   --lime: #e2f36b;
 
@@ -102,7 +100,7 @@ a {
 .nav {
   position: relative;
   z-index: var(--z-nav);
-  color: var(--white);
+  color: var(--ink);
 }
 .nav__bar {
   display: flex;
@@ -115,7 +113,7 @@ a {
   align-items: center;
   gap: 0.6rem;
   min-height: 2.75rem;
-  color: var(--white);
+  color: var(--ink);
   text-decoration: none;
 }
 .nav__logo-mark {
@@ -142,7 +140,7 @@ a {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  color: rgb(255 255 255 / 0.86);
+  color: var(--ink);
   font-size: 0.98rem;
   font-weight: 500;
   text-decoration: none;
@@ -167,7 +165,7 @@ a {
 }
 .nav__links a:hover,
 .nav__links a:focus-visible {
-  color: var(--white);
+  color: var(--ink);
 }
 .nav__links a:hover::after,
 .nav__links a:focus-visible::after {
@@ -221,8 +219,8 @@ a {
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgb(255 255 255 / 0.18);
-  color: var(--white);
+  background: rgb(255 255 255 / 0.55);
+  color: var(--ink);
   cursor: pointer;
 }
 .nav__toggle-icon {
@@ -327,6 +325,99 @@ a {
   }
 }
 
+/* ------------------------------------------------------------ sticky nav */
+/* Floating pill that slides in once the hero nav has scrolled away. */
+.sticky-nav {
+  position: fixed;
+  z-index: 60;
+  top: 0.75rem;
+  left: 50%;
+  width: min(calc(100% - 1.5rem), 64rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: 0.4rem 0.4rem 0.4rem 1.1rem;
+  border: 1px solid rgb(23 52 74 / 0.08);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.88);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: 0 14px 40px -18px rgb(20 50 90 / 0.45);
+  color: var(--ink);
+  translate: -50% calc(-100% - 1.5rem);
+  opacity: 0;
+  transition: translate 0.45s var(--ease-out), opacity 0.3s var(--ease-out);
+}
+.sticky-nav:not([data-visible]) {
+  pointer-events: none;
+}
+.sticky-nav[data-visible] {
+  translate: -50% 0;
+  opacity: 1;
+}
+.sticky-nav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.sticky-nav__mark {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: auto;
+}
+.sticky-nav__links {
+  margin: 0 auto;
+}
+.sticky-nav__links ul {
+  display: flex;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sticky-nav__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-underline-offset: 0.35em;
+}
+.sticky-nav__links a:hover,
+.sticky-nav__links a:focus-visible {
+  text-decoration: underline;
+}
+.sticky-nav__cta {
+  min-height: 2.75rem;
+  padding: 0 1.15rem;
+  font-size: 0.92rem;
+}
+.sticky-nav :focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+@media (max-width: 899px) {
+  .sticky-nav__links {
+    display: none;
+  }
+  .sticky-nav__cta {
+    margin-left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sticky-nav {
+    translate: -50% 0;
+    transition: opacity 0.2s linear;
+  }
+}
+
 /* -------------------------------------------------------------- buttons */
 .btn-outline {
   display: inline-flex;
@@ -351,6 +442,8 @@ a {
 /* ------------------------------------------------------------- sections */
 .section {
   position: relative;
+  /* anchor jumps land below the floating sticky nav */
+  scroll-margin-top: 5rem;
   padding: clamp(5rem, 10vw, 9rem) 0;
 }
 .section__inner {

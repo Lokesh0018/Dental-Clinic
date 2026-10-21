@@ -1,4 +1,5 @@
 import DentalHero from './components/hero/DentalHero.jsx';
+import StickyNav from './components/StickyNav.jsx';
 import AboutSection from './components/sections/AboutSection.jsx';
 import ServicesSection from './components/sections/ServicesSection.jsx';
 import ContactSection from './components/sections/ContactSection.jsx';
@@ -9,6 +10,7 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
+      <StickyNav />
       <main id="main">
         <DentalHero />
         <AboutSection />

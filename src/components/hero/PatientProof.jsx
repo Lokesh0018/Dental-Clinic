@@ -4,13 +4,19 @@ import { BRAND } from '../../config/brand.js';
 const { patient } = BRAND.hero;
 const { stat } = BRAND.proof;
 
-/** Wavy-edged white card behind the stat, drawn so it scales without distortion of the curves. */
-function WavyCard() {
+// "98%" → 0.98 for the meter; anything that isn't a percentage gets no meter
+const percent = /^\s*(\d+(?:\.\d+)?)\s*%\s*$/.exec(stat?.value ?? '');
+const meter = percent ? Math.min(1, Number(percent[1]) / 100) : null;
+
+function HeartIcon() {
   return (
-    <svg className="proof__shape" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true" focusable="false">
       <path
-        fill="currentColor"
-        d="M24 8C60 2 92 14 120 10s56-8 66 6c10 15 4 40 6 66s10 52 0 70c-10 17-40 18-70 14s-52 10-86 6C14 170 6 150 8 124s-8-48-4-76S0 12 24 8z"
+        d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -24,16 +30,26 @@ export default function PatientProof() {
     <div className="proof" data-has-photo={hasPhoto}>
       {stat && (
         <div className="proof__card" data-hero="stat">
-          <WavyCard />
           <p className="proof__text">
-            <strong className="proof__value">
-              <span aria-hidden="true" data-count>
-                {stat.value}
+            <span className="proof__head">
+              <span className="proof__icon">
+                <HeartIcon />
               </span>
-              <span className="visually-hidden">{stat.value}</span>
-            </strong>
+              <strong className="proof__value">
+                {/* the visible number counts up; screen readers get the final value only */}
+                <span aria-hidden="true" data-count>
+                  {stat.value}
+                </span>
+                <span className="visually-hidden proof__sr">{stat.value}</span>
+              </strong>
+            </span>
             <span className="proof__label">{stat.label}</span>
           </p>
+          {meter !== null && (
+            <span className="proof__meter" aria-hidden="true">
+              <span className="proof__meter-fill" data-hero="meter" style={{ '--value': meter }} />
+            </span>
+          )}
         </div>
       )}
       {hasPhoto && (

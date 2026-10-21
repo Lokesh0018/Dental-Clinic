@@ -13,8 +13,9 @@ import '../../styles/hero.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const FRAME_URLS = sequenceUrls(BRAND.hero.sequence);
-// Data-saver users get the still first frame instead of ~5.5 MB of frames.
+const SEQ = BRAND.hero.sequence;
+const FRAME_SETS = SEQ.sets.map(({ width, path }) => ({ width, urls: sequenceUrls(SEQ, path) }));
+// Data-saver users get the still first frame instead of 4–8 MB of frames.
 const saveData = typeof navigator !== 'undefined' && navigator.connection?.saveData === true;
 
 export default function DentalHero() {
@@ -36,7 +37,9 @@ export default function DentalHero() {
         .from('[data-hero="intro"]', { autoAlpha: 0, y: 16, duration: 0.9 }, 0.8)
         .from('[data-hero="actions"] > *', { autoAlpha: 0, y: 14, duration: 0.8, stagger: 0.1 }, 1.0)
         .from('[data-hero="tooth"]', { autoAlpha: 0, scale: 0.96, y: 30, duration: 1.3, ease: 'power2.out' }, 0.5)
-        .from('[data-hero="stat"]', { autoAlpha: 0, y: 30, rotate: -6, duration: 1.0, ease: 'back.out(1.6)' }, 1.0)
+        .from('[data-hero="stat"]', { autoAlpha: 0, y: 24, duration: 0.9, ease: 'power3.out' }, 1.0)
+        // meter fills in step with the count-up (its resting scale comes from --value in CSS)
+        .from('[data-hero="meter"]', { scaleX: 0, duration: 1.4, ease: 'power2.out' }, 1.1)
         .from('[data-hero="patient"]', { autoAlpha: 0, yPercent: 18, duration: 1.2 }, 0.9)
         .from('[data-hero="consult"]', { autoAlpha: 0, scale: 0.5, rotate: -90, duration: 1.1, ease: 'back.out(1.5)' }, 1.2);
 
@@ -81,8 +84,9 @@ export default function DentalHero() {
           <div className="hero__frames" data-hero="tooth">
             <FrameSequence
               className="hero__frames-canvas"
-              urls={FRAME_URLS}
-              fps={BRAND.hero.sequence.fps}
+              sets={FRAME_SETS}
+              size={SEQ.size}
+              fps={SEQ.fps}
               playing={inView}
               still={reduced || saveData}
             />

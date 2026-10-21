@@ -18,6 +18,7 @@ export const BRAND = {
 
   booking: {
     label: 'Book your consultation',
+    shortLabel: 'Book now', // compact sticky nav
     // Internal anchor or an external online-booking URL.
     href: '#contact',
     external: false,
@@ -31,8 +32,21 @@ export const BRAND = {
     // Ghost button beside the booking CTA.
     secondary: { label: 'Explore services', href: '#services' },
 
-    // Hero animation: numbered frames in /public, played as a seamless loop.
-    sequence: { path: '/frames_Fix/frame_', start: 11, count: 61, pad: 6, ext: '.webp', fps: 24 },
+    // Hero animation: transparent cut-out frames in /public (made by tools/key-frames.py from
+    // assets-src/frames_Fix), played as a seamless loop. `size` = full frame size (meta.json);
+    // `sets` = the same frames at different widths, smallest first (tools/resize-frames.py).
+    sequence: {
+      start: 11,
+      count: 61,
+      pad: 6,
+      ext: '.webp',
+      fps: 24,
+      size: [1274, 1040],
+      sets: [
+        { width: 760, path: '/frames_keyed_760/frame_' },
+        { width: 1274, path: '/frames_keyed/frame_' },
+      ],
+    },
     sequenceLabel: 'Miniature dentists polishing and treating a giant tooth implant',
 
     // Cut-out (transparent PNG/WebP) photo of a happy patient, bottom-left of the hero.

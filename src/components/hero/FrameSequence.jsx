@@ -3,48 +3,31 @@ import { useEffect, useRef, useState } from 'react';
 /*
  * Plays a numbered image sequence on a canvas as a seamless, continuous loop.
  *
- * - Ping-pong playback (forward, then back) with cosine-eased turnarounds: every step is a
- *   real one-frame step, so there is never a jump or a cross-fade (ghosting) at the seam.
- *   Speed peaks at `fps` mid-sequence and eases to a stop at each end before reversing.
- * - Frames are only ever scaled uniformly (no stretching) and never cropped into the action.
- * - Each frame is decoded once at the size it is displayed (capped). Its studio backdrop is
- *   faded into transparency at the left and top in canvas space (only over plain backdrop, never
- *   the action), so the scene blends into the hero card instead of reading as a rectangle.
+ * - Ping-pong playback (forward, then back) with a cosine-shaped speed profile: full speed
+ *   (`fps`) mid-sequence, easing down at each end before reversing. Every step is a real
+ *   one-frame step, so there is never a jump or a cross-fade (ghosting) at the seam.
+ * - Starts early: once the first MIN_START frames have arrived it plays over the frames loaded
+ *   so far, and the range widens as the rest stream in (no waiting for the whole sequence).
+ * - Picks the smallest frame set that is still sharp at the displayed size × pixel ratio.
+ * - Frames are transparent cut-outs (see tools/key-frames.py). The whole frame is fitted inside
+ *   the box — uniform scale only, nothing cropped — bottom-aligned and centred.
  * - Draws only when the frame index changes; stops when `playing` is false.
  */
 
-const SRC_W = 1920;
-const SRC_H = 1080;
-// The action (tooth, dentists, scaffolds) lives between x ≈ 340 and 1640 and below y ≈ 40 in the
-// source. The fit window adds ~150px of plain backdrop on the left so the left edge fade only
-// ever lands on backdrop, never on a dentist.
-const ACTION_X0 = 330;
-const ACTION_Y0 = 32;
-const WIN_X0 = 190;
-const WIN_X1 = 1660;
-const CENTER_X = (WIN_X0 + WIN_X1) / 2;
-// Decoded width cap: 61 frames × 1280×720 RGBA ≈ 225 MB worst case (2× screens).
+// Decoded width cap: keeps 61 RGBA frames well under ~250 MB even on 2× screens.
 const MAX_FRAME_W = 1280;
 const CONCURRENCY = 4;
+const MIN_START = 16; // frames needed before playback starts (~0.7s of motion)
+const END_SPEED = 0.12; // fraction of fps kept at the turnarounds, so the ends never stall
 
-export function sequenceUrls({ path, start, count, pad, ext }) {
+export function sequenceUrls({ start, count, pad, ext }, path) {
   return Array.from({ length: count }, (_, i) => `${path}${String(start + i).padStart(pad, '0')}${ext}`);
 }
 
-/** Cover the box, but never crop into the fit window; bottom-aligned, centred on the window. */
-function layout(w, h) {
-  const s = Math.min(Math.max(h / SRC_H, w / SRC_W), w / (WIN_X1 - WIN_X0));
-  return { s, dx: w / 2 - CENTER_X * s, dy: h - SRC_H * s };
-}
-
-/** Transparent at 0 → opaque at (x, y), eased so the transition has no visible start line. */
-function edge(ctx, x, y) {
-  const g = ctx.createLinearGradient(0, 0, x, y);
-  g.addColorStop(0, 'rgba(0,0,0,0)');
-  g.addColorStop(0.35, 'rgba(0,0,0,0.22)');
-  g.addColorStop(0.7, 'rgba(0,0,0,0.72)');
-  g.addColorStop(1, '#000');
-  return g;
+/** Contain the frame in the box: uniform scale, bottom-aligned, centred horizontally. */
+function layout(w, h, [fw, fh]) {
+  const s = Math.min(w / fw, h / fh);
+  return { s, dx: (w - fw * s) / 2, dy: h - fh * s };
 }
 
 function loadImage(url, priority) {
@@ -55,9 +38,9 @@ function loadImage(url, priority) {
   return { img, done: img.decode().then(() => img) };
 }
 
-/** Downscale once; fade the bottom edge (it meets the card or the proof card on small screens). */
+/** Downscale once; soften the bottom edge, where the implant and scaffold are cut by the frame. */
 function bake(img, width) {
-  const height = Math.round((width * SRC_H) / SRC_W);
+  const height = Math.round((width * img.naturalHeight) / img.naturalWidth);
   const c = document.createElement('canvas');
   c.width = width;
   c.height = height;
@@ -73,39 +56,27 @@ function bake(img, width) {
   return c;
 }
 
-export default function FrameSequence({ urls, fps = 24, playing = true, still = false, className }) {
+/**
+ * @param sets  frame sets, smallest first: [{ width, urls }]
+ * @param size  frame geometry [w, h] (same aspect for every set)
+ */
+export default function FrameSequence({ sets, size, fps = 24, playing = true, still = false, className }) {
   const canvas = useRef(null);
-  const frames = useRef([]);
+  const frames = useRef([]); // baked frames; frames[0 .. available-1] are contiguous
+  const available = useRef(0);
   const current = useRef(-1);
+  const motion = useRef({ p: 0, dir: 1 }); // position (frame units) and direction
   const [ready, setReady] = useState(false); // first frame painted
-  const [loaded, setLoaded] = useState(false); // every frame available
+  const [startable, setStartable] = useState(false); // enough frames to play
 
   const draw = (i) => {
     const c = canvas.current;
     const f = frames.current[i];
     if (!c || !f || !c.width) return;
     const ctx = c.getContext('2d');
-    const { s, dx, dy } = layout(c.width, c.height);
-    const w = SRC_W * s;
-    ctx.globalCompositeOperation = 'source-over';
+    const { s, dx, dy } = layout(c.width, c.height, size);
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.drawImage(f, dx, dy, w, SRC_H * s);
-    // The source has little sky above the top dentist. Extend the backdrop upward by repeating its
-    // top row (plain backdrop: nothing in the scene is stretched), so the top fade can be long.
-    if (dy > 0) ctx.drawImage(f, 0, 0, f.width, 1, dx, 0, w, dy + 1);
-    // Fade left and top edges over backdrop only: they end just before the action starts.
-    ctx.globalCompositeOperation = 'destination-in';
-    const fadeX = dx + ACTION_X0 * s;
-    if (fadeX > 1) {
-      ctx.fillStyle = edge(ctx, fadeX, 0);
-      ctx.fillRect(0, 0, c.width, c.height);
-    }
-    const fadeY = Math.max(dy, 0) + ACTION_Y0 * s;
-    if (fadeY > 1) {
-      ctx.fillStyle = edge(ctx, 0, fadeY);
-      ctx.fillRect(0, 0, c.width, c.height);
-    }
-    ctx.globalCompositeOperation = 'source-over';
+    ctx.drawImage(f, dx, dy, size[0] * s, size[1] * s);
     current.current = i;
   };
 
@@ -115,11 +86,9 @@ export default function FrameSequence({ urls, fps = 24, playing = true, still = 
     if (!c) return;
     const fit = () => {
       // layout size, not getBoundingClientRect: the entrance scale must not shrink the backing store
-      const width = c.clientWidth;
-      const height = c.clientHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      c.width = Math.max(1, Math.round(width * dpr));
-      c.height = Math.max(1, Math.round(height * dpr));
+      c.width = Math.max(1, Math.round(c.clientWidth * dpr));
+      c.height = Math.max(1, Math.round(c.clientHeight * dpr));
       draw(Math.max(current.current, 0));
     };
     fit();
@@ -128,31 +97,43 @@ export default function FrameSequence({ urls, fps = 24, playing = true, still = 
     return () => ro.disconnect();
   }, []);
 
-  /* Load: first frame immediately (poster), the rest only when it will actually play. */
+  /* Load: first frame immediately (poster), the rest in order only when it will actually play. */
   useEffect(() => {
     const c = canvas.current;
-    if (!c || !urls.length) return;
+    if (!c || !sets.length) return;
     let cancelled = false;
     const pending = [];
-    const { s } = layout(c.clientWidth || 800, c.clientHeight || 600);
+    const { s } = layout(c.clientWidth || 800, c.clientHeight || 600, size);
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.round(Math.min(SRC_W, MAX_FRAME_W, Math.max(480, SRC_W * s * dpr)));
+    const needed = size[0] * s * dpr;
+    const set = sets.find((x) => x.width >= needed * 0.95) ?? sets[sets.length - 1];
+    const width = Math.round(Math.min(set.width, MAX_FRAME_W, Math.max(320, needed)));
+    const { urls } = set;
     const slots = new Array(urls.length).fill(null);
+
+    const settle = () => {
+      let n = 0;
+      while (n < slots.length && slots[n]) n++;
+      frames.current = slots;
+      available.current = n;
+      if (n >= Math.min(MIN_START, urls.length)) setStartable(true);
+    };
 
     const fetchFrame = (i, priority) => {
       const job = loadImage(urls[i], priority);
       pending.push(job.img);
       return job.done.then(
         (img) => {
-          if (!cancelled) slots[i] = bake(img, width);
+          if (cancelled) return;
+          slots[i] = bake(img, width);
+          settle();
         },
-        () => {}, // a missing frame is skipped, never fatal
+        () => {}, // a missing frame is skipped below, never fatal
       );
     };
 
     fetchFrame(0, 'high').then(() => {
       if (cancelled || !slots[0]) return;
-      frames.current = [slots[0]];
       draw(0);
       setReady(true);
       if (still) return;
@@ -163,8 +144,10 @@ export default function FrameSequence({ urls, fps = 24, playing = true, still = 
       };
       Promise.all(Array.from({ length: CONCURRENCY }, worker)).then(() => {
         if (cancelled) return;
+        // all done: drop any frame that failed to load so the loop has no gap
         frames.current = slots.filter(Boolean);
-        setLoaded(frames.current.length > 1);
+        available.current = frames.current.length;
+        if (available.current > 1) setStartable(true);
       });
     });
 
@@ -172,31 +155,47 @@ export default function FrameSequence({ urls, fps = 24, playing = true, still = 
       cancelled = true;
       pending.forEach((img) => (img.src = ''));
       frames.current = [];
+      available.current = 0;
       current.current = -1;
+      motion.current = { p: 0, dir: 1 };
       setReady(false);
-      setLoaded(false);
+      setStartable(false);
     };
-  }, [urls, still]);
+  }, [sets, size, still]);
 
-  /* Playback: elapsed time only advances while playing, so pausing never causes a jump. */
-  const elapsed = useRef(0);
+  /*
+   * Playback: integrate position with a cosine-shaped speed profile over the frames available
+   * right now. Growing the range while playing never moves the position, so there is no jump;
+   * pausing simply stops integrating, so resuming continues exactly where it left off.
+   */
   useEffect(() => {
-    if (!loaded || !playing || still) return;
-    const last = frames.current.length - 1;
-    const period = (Math.PI * last) / fps; // seconds for one forward + back cycle
+    if (!startable || !playing || still) return;
     let raf = 0;
     let prev = performance.now();
     const tick = (now) => {
-      elapsed.current += Math.min(now - prev, 100) / 1000; // clamp: no catch-up after a stall
+      const dt = Math.min(now - prev, 100) / 1000; // clamp: no catch-up after a stall
       prev = now;
-      const phase = (elapsed.current % period) / period;
-      const i = Math.round(((1 - Math.cos(phase * 2 * Math.PI)) / 2) * last);
-      if (i !== current.current) draw(i);
+      const last = available.current - 1;
+      if (last > 0) {
+        const m = motion.current;
+        m.p = Math.min(m.p, last);
+        const speed = fps * Math.max(END_SPEED, (2 * Math.sqrt(m.p * (last - m.p))) / last);
+        m.p += m.dir * speed * dt;
+        if (m.p >= last) {
+          m.p = last;
+          m.dir = -1;
+        } else if (m.p <= 0) {
+          m.p = 0;
+          m.dir = 1;
+        }
+        const i = Math.round(m.p);
+        if (i !== current.current) draw(i);
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [loaded, playing, still, fps]);
+  }, [startable, playing, still, fps]);
 
   return <canvas ref={canvas} className={className} data-ready={ready || undefined} aria-hidden="true" />;
 }
