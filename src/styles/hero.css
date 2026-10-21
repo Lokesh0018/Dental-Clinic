@@ -1,0 +1,223 @@
+/* =====================================================================
+   Hero — powder-blue studio, white wordmark, one giant glossy molar
+   ===================================================================== */
+.hero {
+  --mark-size: clamp(4.5rem, 13.6vw, 12.5rem);
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: clip;
+  isolation: isolate;
+  color: var(--white);
+  background: var(--sky);
+}
+
+/* ------------------------------------------------------------ backdrop */
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  pointer-events: none;
+  /* seamless studio sweep: slightly lighter air above, a soft floor below */
+  background: linear-gradient(180deg, #b2d3e6 0%, var(--sky) 52%, #a3c8de 100%);
+}
+.hero__glow {
+  position: absolute;
+  left: 71%;
+  top: 44%;
+  width: min(72vw, 1150px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(222 238 247 / 0.85) 0%,
+    rgb(200 225 239 / 0.45) 45%,
+    rgb(169 205 226 / 0) 100%
+  );
+}
+/* faint horizon where the sweep turns into floor */
+.hero__floor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34%;
+  background: linear-gradient(180deg, rgb(150 190 214 / 0) 0%, rgb(150 190 214 / 0.3) 100%);
+}
+
+/* ------------------------------------------------------------ wordmark */
+.hero__brand {
+  position: absolute;
+  z-index: var(--z-copy);
+  left: max(var(--pad), calc((100vw - var(--content-max)) / 2 + var(--pad)));
+  top: 50%;
+  transform: translateY(-58%);
+}
+.brand-type {
+  margin: 0;
+  color: var(--white);
+  line-height: 0.82;
+  text-shadow: 0 6px 40px rgb(60 110 145 / 0.18);
+}
+.brand-type__mark {
+  display: block;
+  font-size: var(--mark-size);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  /* optical alignment: pull the round C flush with the column edge */
+  margin-left: -0.045em;
+}
+.brand-type__sub {
+  display: block;
+  margin-top: calc(var(--mark-size) * 0.16);
+  font-size: calc(var(--mark-size) * 0.192);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.33em;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- the molar */
+.hero__stage {
+  position: absolute;
+  z-index: var(--z-stage);
+  right: max(1vw, calc((100vw - var(--content-max)) / 2));
+  top: 10%;
+  bottom: 14%;
+  width: 46vw;
+  pointer-events: none;
+}
+.hero__canvas,
+.hero__still {
+  position: absolute;
+  inset: -4% -4% -6% -4%;
+}
+.hero__canvas {
+  opacity: 0;
+  visibility: hidden;
+}
+.hero__canvas canvas {
+  pointer-events: none;
+}
+.hero__still {
+  width: 108%;
+  height: 110%;
+  object-fit: contain;
+  opacity: 0;
+  visibility: hidden;
+  user-select: none;
+}
+
+/* ------------------------------------------------- tagline + scroll cue */
+.smile {
+  position: absolute;
+  z-index: var(--z-copy);
+  left: 0;
+  right: 0;
+  bottom: clamp(1.25rem, 3.6vh, 2.5rem);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.smile__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  pointer-events: auto;
+}
+.smile__text {
+  margin: 0;
+  color: var(--white);
+  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  font-weight: 300;
+  letter-spacing: 0.16em;
+  text-shadow: 0 1px 12px rgb(50 95 125 / 0.25);
+}
+.scroll-cue {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 0.9);
+  border-radius: 50%;
+  color: var(--white);
+  transition: background-color 0.3s var(--ease-out);
+}
+.scroll-cue:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+.scroll-cue:focus-visible {
+  border-radius: 50%;
+}
+.scroll-cue__arrow {
+  animation: cue-bob 2.8s ease-in-out infinite;
+}
+@keyframes cue-bob {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(3px); }
+}
+
+/* -------------------------------------------------------- tablet landscape */
+@media (max-width: 1199px) {
+  .hero {
+    --mark-size: clamp(4.5rem, 13vw, 10rem);
+  }
+  .hero__stage {
+    width: 47vw;
+    top: 10%;
+    bottom: 18%;
+  }
+}
+
+/* ----------------------------------- mobile + portrait tablet (stacked) */
+@media (max-width: 767px), (max-width: 1199px) and (orientation: portrait) {
+  .hero {
+    --mark-size: min(23vw, 11rem);
+    display: flex;
+    flex-direction: column;
+    padding-top: clamp(5.5rem, 13svh, 8.5rem);
+  }
+  .hero__glow {
+    left: 50%;
+    top: 62%;
+    width: 140vw;
+  }
+  .hero__floor {
+    height: 30%;
+  }
+  .hero__brand {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    padding: 0 var(--pad);
+  }
+  .hero__stage {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: auto;
+    flex: 1 1 auto;
+    min-height: 44svh;
+    margin: 0.5rem 0 0;
+  }
+  .hero__canvas,
+  .hero__still {
+    inset: -2% 0 -4% 0;
+  }
+  .hero__still {
+    width: 100%;
+    height: 106%;
+  }
+  .smile {
+    position: relative;
+    bottom: auto;
+    padding: 0.5rem 0 clamp(1.25rem, 3svh, 2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue__arrow {
+    animation: none;
+  }
+}
