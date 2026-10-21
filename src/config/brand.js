@@ -28,6 +28,8 @@ export const BRAND = {
     headline: ['Restore', 'Your True', 'Smile'],
     // **double asterisks** mark the words rendered in bright white.
     intro: 'Using **advanced technology**, we deliver comprehensive treatments for a healthy, **confident smile.**',
+    // Ghost button beside the booking CTA.
+    secondary: { label: 'Explore services', href: '#services' },
 
     // Cut-out (transparent PNG/WebP) photo of a happy patient, bottom-left of the hero.
     // Hidden automatically until the file exists.

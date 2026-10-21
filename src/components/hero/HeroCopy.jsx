@@ -1,4 +1,5 @@
-import { BRAND } from '../../config/brand.js';
+import { BRAND, bookingLinkProps } from '../../config/brand.js';
+import ArrowIcon from './ArrowIcon.jsx';
 
 const { hero, proof } = BRAND;
 
@@ -40,6 +41,15 @@ export default function HeroCopy() {
       <p className="hero-copy__intro" data-hero="intro">
         {renderIntro(hero.intro)}
       </p>
+      <div className="hero-copy__actions" data-hero="actions">
+        <a className="btn btn--primary" href={BRAND.booking.href} {...bookingLinkProps}>
+          {BRAND.booking.label}
+          <ArrowIcon />
+        </a>
+        <a className="btn btn--ghost" href={hero.secondary.href}>
+          {hero.secondary.label}
+        </a>
+      </div>
     </div>
   );
 }

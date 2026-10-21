@@ -116,6 +116,7 @@ a {
   text-decoration: none;
 }
 .nav__logo-mark {
+  flex-shrink: 0;
   width: 1.5rem;
   height: auto;
 }
@@ -184,6 +185,7 @@ a {
 
 .nav__toggle {
   display: none;
+  flex-shrink: 0;
   place-items: center;
   width: 2.9rem;
   height: 2.9rem;
@@ -270,7 +272,22 @@ a {
     display: inline-grid;
   }
 }
+/* too narrow for logo + pill + menu: the menu already links to Contact */
+@media (max-width: 380px) {
+  .nav__bar > .pill {
+    display: none;
+  }
+  .nav__toggle {
+    margin-left: auto;
+  }
+}
 @media (max-width: 420px) {
+  .nav__bar {
+    gap: 0.6rem;
+  }
+  .nav__logo-text {
+    font-size: 1rem;
+  }
   .nav__bar > .pill {
     padding-left: 1rem;
     font-size: 0.9rem;
