@@ -118,8 +118,16 @@
   object-fit: cover;
   pointer-events: none;
 }
-.cmp__img--before {
+.cmp__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cmp__layer--before {
   clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.cmp__layer--after {
+  clip-path: inset(0 0 0 var(--pos));
 }
 .cmp__tag {
   position: absolute;

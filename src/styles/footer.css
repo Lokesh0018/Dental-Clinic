@@ -80,6 +80,15 @@
   animation: footer-twinkle 4.2s ease-in-out var(--dl) infinite;
 }
 
+/* off-screen (or before the first observation): freeze every backdrop loop */
+.footer[data-paused] .footer__glow,
+.footer[data-paused] .footer__tooth path,
+.footer[data-paused] .footer__riser path,
+.footer[data-paused] .footer__sweep,
+.footer[data-paused] .footer__spark {
+  animation-play-state: paused;
+}
+
 @keyframes footer-breathe {
   0%,
   100% {

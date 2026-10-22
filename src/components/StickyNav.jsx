@@ -23,11 +23,29 @@ export default function StickyNav() {
 
   useEffect(() => {
     const heroNav = document.querySelector('[data-hero="nav"]');
-    if (!heroNav || !('IntersectionObserver' in window)) return;
-    // visible only when the hero nav is above the viewport (not when the page is scrolled to the top)
-    const io = new IntersectionObserver(([e]) => setVisible(!e.isIntersecting && e.boundingClientRect.bottom < 0));
-    io.observe(heroNav);
-    return () => io.disconnect();
+    if (!heroNav) return;
+    // Visible only once the hero's own nav has scrolled above the viewport. Measured from the
+    // element's real position on every scroll frame: an IntersectionObserver alone can miss a
+    // crossing during fast or smooth scrolling and leave the bar stuck on screen.
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      setVisible(heroNav.getBoundingClientRect().bottom < 0);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver(schedule) : null;
+    io?.observe(heroNav);
+    return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      io?.disconnect();
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   // the menu cannot outlive the bar it hangs from

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -9,6 +9,7 @@ import ConsultBadge from './ConsultBadge.jsx';
 import FrameSequence from './FrameSequence.jsx';
 import { BRAND } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
+import { useInView } from '../../hooks/useInView.js';
 import '../../styles/hero.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -32,7 +33,7 @@ const saveData = typeof navigator !== 'undefined' && navigator.connection?.saveD
 export default function DentalHero() {
   const root = useRef(null);
   const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
-  const [inView, setInView] = useState(true);
+  const inView = useInView(root); // frames + CSS loops only run while the hero is on screen
 
   /* Entrance: card → nav → headline lines → avatars → intro → proof → badge → tooth image */
   useGSAP(
@@ -76,15 +77,6 @@ export default function DentalHero() {
     },
     { scope: root, dependencies: [reduced], revertOnUpdate: true },
   );
-
-  /* Pause every loop (frames + CSS) while the hero is off-screen. */
-  useEffect(() => {
-    const el = root.current;
-    if (!el || !('IntersectionObserver' in window)) return;
-    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
 
   return (
     <section id="top" ref={root} className="hero" aria-labelledby="hero-title" data-paused={!inView || undefined}>

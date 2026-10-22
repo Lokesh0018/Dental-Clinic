@@ -12,10 +12,15 @@ function BeforeAfter({ before, after, title }) {
   return (
     <figure className="cmp" style={{ '--pos': `${pos}%` }}>
       <div className="cmp__frame">
-        <img className="cmp__img" src={after} alt={`${title}: after treatment`} draggable="false" />
-        <img className="cmp__img cmp__img--before" src={before} alt={`${title}: before treatment`} draggable="false" />
-        <span className="cmp__tag cmp__tag--before" aria-hidden="true">Before</span>
-        <span className="cmp__tag cmp__tag--after" aria-hidden="true">After</span>
+        {/* each side is a clipped layer holding its image and its label, so the divider wipes the label away too */}
+        <div className="cmp__layer cmp__layer--after">
+          <img className="cmp__img" src={after} alt={`${title}: after treatment`} draggable="false" />
+          <span className="cmp__tag cmp__tag--after" aria-hidden="true">After</span>
+        </div>
+        <div className="cmp__layer cmp__layer--before">
+          <img className="cmp__img" src={before} alt={`${title}: before treatment`} draggable="false" />
+          <span className="cmp__tag cmp__tag--before" aria-hidden="true">Before</span>
+        </div>
         <span className="cmp__divider" aria-hidden="true">
           <span className="cmp__knob">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

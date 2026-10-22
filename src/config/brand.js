@@ -14,7 +14,7 @@ export const BRAND = {
   ],
 
   // White pill in the top-right corner of the hero card.
-  navCta: { label: 'Contacts', href: '#contact' },
+  navCta: { label: 'Book now', href: '#contact' },
 
   booking: {
     label: 'Book your consultation',
@@ -76,10 +76,14 @@ export const BRAND = {
     // Where the booking form POSTs JSON (e.g. a Formspree/Basin URL). With no endpoint,
     // the form opens the visitor's mail client addressed to `email`; with neither it just confirms.
     formEndpoint: null,
-    // Map shown beside the booking form. `query` is what Google Maps searches for (address or
-    // clinic name); `embedUrl` overrides it with an exact "Embed a map" URL from Google Maps.
+    // Map beside the booking form. Google's free embed needs something it can geocode, so set
+    // `lat`/`lng` (most reliable; right-click the clinic in Google Maps to copy them) or fill in
+    // `address` above. `embedUrl` overrides both with an exact "Share → Embed a map" URL.
+    // With none of these set, a placeholder panel is shown instead of an empty map.
     map: {
-      query: 'Crown Dental Group',
+      lat: 17.815166,
+      lng: 83.357618,
+      zoom: 16,
       embedUrl: null,
     },
   },

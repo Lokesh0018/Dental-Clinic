@@ -8,6 +8,7 @@ import ArrowIcon from '../hero/ArrowIcon.jsx';
 import { iconProps } from '../icons.jsx';
 import { SERVICE_TITLES } from '../../data/services.jsx';
 import { reveal } from '../../hooks/useReveal.js';
+import { getMapTarget } from '../../config/map.js';
 import chairImg from '../../assets/images/chair.webp';
 import cutterImg from '../../assets/images/cutter.webp';
 import mirrorImg from '../../assets/images/mouth-mirror.webp';
@@ -80,9 +81,7 @@ export default function ContactSection() {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | sent | failed
 
-  const mapQuery = contact.map?.query || contact.address || BRAND.name;
-  const mapSrc = contact.map?.embedUrl || `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`;
-  const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
+  const map = getMapTarget();
 
   const details = [
     contact.phone && { icon: 'phone', label: 'Call us', value: contact.phone, href: `tel:${digits(contact.phone)}` },
@@ -254,22 +253,31 @@ export default function ContactSection() {
 
           <aside className="contact__aside">
             <div className="contact__map">
-              <iframe
-                src={mapSrc}
-                title={`Map showing the location of ${BRAND.name}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
+              {map.src ? (
+                <iframe
+                  src={map.src}
+                  title={`Map showing the location of ${BRAND.name}`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="contact__map-empty" role="img" aria-label="Map placeholder">
+                  <span className="contact__map-empty-pin" aria-hidden="true">
+                    {ICONS.pin}
+                  </span>
+                  <p>Map goes live once the clinic address is added.</p>
+                </div>
+              )}
               <div className="contact__map-bar">
                 <span className="contact__map-pin" aria-hidden="true">
                   {ICONS.pin}
                 </span>
                 <div className="contact__map-text">
                   <span className="contact__detail-label">Find us</span>
-                  <span>{contact.address || BRAND.name}</span>
+                  <span>{map.label}</span>
                 </div>
-                <a className="contact__map-link" href={directionsHref} target="_blank" rel="noopener">
+                <a className="contact__map-link" href={map.directions} target="_blank" rel="noopener">
                   Get directions
                   <ArrowIcon />
                 </a>

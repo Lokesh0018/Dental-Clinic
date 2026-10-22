@@ -1,6 +1,9 @@
+import { useRef } from 'react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
+import { useInView } from '../../hooks/useInView.js';
 import ToothLogo, { TOOTH_PATH } from '../hero/ToothLogo.jsx';
 import { SERVICE_TITLES } from '../../data/services.jsx';
+import { getMapTarget } from '../../config/map.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
 import '../../styles/footer.css';
 
@@ -99,11 +102,12 @@ function Backdrop() {
 }
 
 export default function Footer() {
+  const root = useRef(null);
+  const inView = useInView(root, { initial: false }); // backdrop loops only run while the footer is on screen
   const { contact } = BRAND;
   const year = new Date().getFullYear();
   const social = Object.entries(BRAND.social ?? {}).filter(([k, url]) => url && SOCIAL[k]);
-  const mapQuery = contact.map?.query || contact.address || BRAND.name;
-  const directionsHref = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapQuery)}`;
+  const directionsHref = getMapTarget().directions;
   const details = [
     contact.phone && { label: 'Phone', value: contact.phone, href: `tel:${contact.phone.replace(/[^+\d]/g, '')}` },
     contact.email && { label: 'Email', value: contact.email, href: `mailto:${contact.email}` },
@@ -112,7 +116,7 @@ export default function Footer() {
   ].filter(Boolean);
 
   return (
-    <footer className="footer" aria-labelledby="footer-title">
+    <footer ref={root} className="footer" aria-labelledby="footer-title" data-paused={!inView || undefined}>
       <Backdrop />
       <div className="section__inner footer__inner">
         <div className="footer__grid">
