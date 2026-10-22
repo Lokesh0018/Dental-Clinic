@@ -1,11 +1,23 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
+import ServiceModal from './ServiceModal.jsx';
 import '../../styles/services.css';
+
+import rootCanalBefore from '../../assets/images/root-canal-before.webp';
+import rootCanalAfter from '../../assets/images/root-canal-after.webp';
+import implantsBefore from '../../assets/images/dental-implants-before.webp';
+import implantsAfter from '../../assets/images/dental-implants-after.webp';
+import alignersBefore from '../../assets/images/clear-aligners-before.webp';
+import alignersAfter from '../../assets/images/clear-aligners-after.webp';
+import smileBefore from '../../assets/images/smile-designing-before.webp';
+import smileAfter from '../../assets/images/smile-designing-after.webp';
+import crownsBefore from '../../assets/images/zirconia-crowns-before.webp';
+import crownsAfter from '../../assets/images/zirconia-crowns-after.webp';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -62,42 +74,95 @@ const CheckIcon = () => (
   </svg>
 );
 
+/* Every service carries the same shape so the pop-up stays identical:
+   detail copy, four data points, the includes list, and a before/after pair. */
 const SERVICES = [
   {
     icon: 'rootCanal',
     title: 'Root Canal',
     body: 'Gentle, pain-free endodontic therapy designed to save and preserve your natural tooth while eliminating infection.',
+    detail:
+      'We remove the infected pulp, disinfect and seal the canals, then protect the tooth with a crown. Modern rotary instruments and digital length measurement make the visit quick and comfortable.',
+    stats: [
+      { label: 'Visits', value: '1–2' },
+      { label: 'Chair time', value: '60–90 min' },
+      { label: 'Success rate', value: '95%+' },
+      { label: 'Recovery', value: '1–2 days' },
+    ],
     includes: ['Single-visit options', 'Digital apex locator', 'Pain-free anaesthesia'],
+    before: rootCanalBefore,
+    after: rootCanalAfter,
   },
   {
     icon: 'implants',
     title: 'Dental Implants',
     body: 'Permanent titanium and zirconia tooth replacements that look, feel, and function just like natural teeth.',
+    detail:
+      'A biocompatible post is placed in the jaw and left to fuse with the bone, then topped with a custom crown. Guided planning from a 3D scan means a precise, minimally invasive placement.',
+    stats: [
+      { label: 'Success rate', value: '98%' },
+      { label: 'Healing', value: '3–6 months' },
+      { label: 'Lifespan', value: '25+ years' },
+      { label: 'Material', value: 'Ti / Zirconia' },
+    ],
     includes: ['Full-arch solutions', 'Computer-guided placement', 'Natural aesthetics'],
+    before: implantsBefore,
+    after: implantsAfter,
   },
   {
     icon: 'aligners',
     title: 'Clear Aligners',
     body: 'Discreet, comfortable transparent trays that straighten your teeth seamlessly without brackets or metal wires.',
+    detail:
+      'A digital scan maps every tooth and simulates the final result before you begin. A series of custom trays then moves your teeth in small, planned steps, swapped every one to two weeks.',
+    stats: [
+      { label: 'Treatment', value: '6–18 months' },
+      { label: 'Daily wear', value: '22 hours' },
+      { label: 'New tray', value: 'Every 1–2 wks' },
+      { label: 'Check-ups', value: 'Every 6–8 wks' },
+    ],
     includes: ['Custom 3D scan', 'Virtually invisible', 'Removable convenience'],
+    before: alignersBefore,
+    after: alignersAfter,
   },
   {
     icon: 'smile',
     title: 'Smile Designing',
     body: 'Bespoke aesthetic smile transformations combining proportions, facial symmetry, veneers, and whitening.',
-    includes: ['Digital smile simulation', 'Porcelain veneers', 'Enamel reshaping'],
+    detail:
+      'Digitally planned around your facial proportions using veneers, whitening, and contouring for a harmonious smile.',
+    stats: [
+      { label: 'Visits', value: '2–3' },
+      { label: 'Thickness', value: '0.3–0.5 mm' },
+      { label: 'Lifespan', value: '10–15 yrs' },
+      { label: 'Preview', value: 'Digital 3D' },
+    ],
+    includes: ['Digital 3D simulation', 'Porcelain veneers', 'Enamel reshaping'],
+    before: smileBefore,
+    after: smileAfter,
   },
   {
     icon: 'crowns',
     title: 'Zirconia Crowns',
     body: 'Ultra-durable, lifelike biocompatible crowns that restore strength, function, and aesthetic perfection.',
+    detail:
+      'Milled from a single block of zirconia and shaded to match neighbouring teeth, these crowns are metal-free, gum-friendly, and strong enough for molars. CAD/CAM design gives a precise, comfortable fit.',
+    stats: [
+      { label: 'Visits', value: '2' },
+      { label: 'Flexural strength', value: '1,200 MPa' },
+      { label: 'Lifespan', value: '15+ years' },
+      { label: 'Material', value: 'Metal-free' },
+    ],
     includes: ['Metal-free biocompatibility', 'High fracture resistance', 'Precision CAD/CAM fit'],
+    before: crownsBefore,
+    after: crownsAfter,
   },
 ];
 
 export default function ServicesSection() {
   const root = useRef(null);
   const reduced = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const [active, setActive] = useState(null); // index of the open service, or null
 
   useGSAP(
     () => {
@@ -155,15 +220,22 @@ export default function ServicesSection() {
                   </li>
                 ))}
               </ul>
-              <a className="services__link" href={BRAND.booking.href} {...bookingLinkProps}>
-                <span>Ask about {s.title.toLowerCase()}</span>
+              <button type="button" className="services__link" onClick={() => setActive(i)}>
+                <span>See before &amp; after</span>
                 <span className="services__link-dot" aria-hidden="true">
                   <ArrowIcon />
                 </span>
-              </a>
+              </button>
             </li>
           ))}
         </ul>
+
+        <ServiceModal
+          service={active === null ? null : SERVICES[active]}
+          index={active ?? 0}
+          icon={active === null ? null : ICONS[SERVICES[active].icon]}
+          onClose={() => setActive(null)}
+        />
 
         <aside className="services__help" aria-label="Not sure what you need">
           <div className="services__help-text">

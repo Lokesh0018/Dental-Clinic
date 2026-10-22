@@ -1,0 +1,344 @@
+/* =====================================================================
+   Service pop-up — native <dialog>, one consistent card for every service:
+   before/after comparison on the left, data points + includes + CTA right.
+   ===================================================================== */
+.smodal {
+  --m-pad: clamp(1.5rem, 3vw, 2.5rem);
+  width: min(1100px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: clamp(1.5rem, 2.5vw, 2rem);
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 50px 100px -40px rgb(20 50 90 / 0.6), 0 0 0 1px rgb(23 52 74 / 0.08);
+  overflow: hidden;
+  outline: none;
+}
+.smodal::backdrop {
+  background: rgb(23 52 74 / 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .smodal[open] {
+    animation: smodal-in 0.45s var(--ease-out);
+  }
+  .smodal[open]::backdrop {
+    animation: smodal-fade 0.3s ease-out;
+  }
+}
+@keyframes smodal-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+}
+@keyframes smodal-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.smodal__card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.smodal__close {
+  position: absolute;
+  z-index: 2;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(23 52 74 / 0.1);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.9);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.smodal__close:hover {
+  background: var(--lime);
+  transform: rotate(90deg);
+}
+
+/* ---------------------------------------------------------- media side */
+.smodal__media {
+  display: flex;
+  align-items: center;
+  padding: var(--m-pad);
+  background:
+    radial-gradient(60% 60% at 0% 100%, rgb(169 205 226 / 0.5), transparent 70%),
+    var(--paper);
+}
+
+/* ------------------------------------------------------ before / after */
+.cmp {
+  width: 100%;
+  margin: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.cmp__frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  background: var(--sky-light);
+  box-shadow: 0 24px 50px -30px rgb(20 50 90 / 0.6), 0 0 0 1px rgb(23 52 74 / 0.08);
+  touch-action: none;
+}
+.cmp__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.cmp__img--before {
+  clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+}
+.cmp__tag {
+  position: absolute;
+  top: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.cmp__tag--before {
+  left: 0.85rem;
+  background: rgb(23 52 74 / 0.75);
+  color: var(--white);
+}
+.cmp__tag--after {
+  right: 0.85rem;
+  background: var(--lime);
+  color: var(--ink);
+}
+.cmp__divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--pos);
+  width: 2px;
+  background: var(--white);
+  box-shadow: 0 0 0 1px rgb(23 52 74 / 0.15);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.cmp__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  box-shadow: 0 8px 20px -8px rgb(20 50 90 / 0.6), 0 0 0 1px rgb(23 52 74 / 0.1);
+  transform: translate(-50%, -50%);
+  transition: background-color 0.2s var(--ease-out);
+}
+.cmp__frame:hover .cmp__knob,
+.cmp__frame:has(.cmp__range:focus-visible) .cmp__knob {
+  background: var(--lime);
+}
+.cmp__frame:has(.cmp__range:focus-visible) {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+/* the invisible control that does all the work */
+.cmp__range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.cmp__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 2.75rem;
+  height: 100%;
+}
+.cmp__range::-moz-range-thumb {
+  width: 2.75rem;
+  height: 100%;
+  border: 0;
+}
+.cmp__hint {
+  margin: 0.8rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------- body side */
+.smodal__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+  padding: var(--m-pad);
+  padding-right: calc(var(--m-pad) + 1.5rem);
+  overflow-y: auto;
+}
+.smodal__head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.smodal__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: var(--lime);
+  color: var(--ink);
+}
+.smodal__eyebrow {
+  margin: 0 0 0.2rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.smodal__head h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.smodal__lede {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+/* data points: 2×2 tiles with the figure big and the label small */
+.smodal__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+.smodal__stat {
+  padding: 0.9rem 1rem;
+  border: 1px solid rgb(23 52 74 / 0.08);
+  border-radius: 1rem;
+  background: var(--paper);
+}
+.smodal__stat dt {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.smodal__stat dd {
+  margin: 0.2rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.smodal__includes {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding: 1.2rem 0 0;
+  border-top: 1px solid rgb(23 52 74 / 0.08);
+  list-style: none;
+}
+.smodal__includes li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.93rem;
+  font-weight: 600;
+}
+.smodal__includes svg {
+  flex-shrink: 0;
+  padding: 0.2rem;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+}
+.smodal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+.smodal :focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------ responsive */
+@media (max-width: 899px) {
+  .smodal__card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* clear the floating close button, which sits over the media on mobile */
+  .smodal__media {
+    padding-top: calc(1rem + 2.75rem + 0.75rem);
+    padding-bottom: 1rem;
+  }
+  .smodal__body {
+    padding-right: var(--m-pad);
+  }
+}
+@media (max-width: 480px) {
+  .smodal {
+    width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+  .smodal__card {
+    max-height: calc(100dvh - 1rem);
+  }
+  .smodal__stats {
+    gap: 0.5rem;
+  }
+  .smodal__stat {
+    padding: 0.75rem 0.85rem;
+  }
+  .smodal__stat dd {
+    font-size: 1.1rem;
+  }
+  .smodal__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .smodal__close,
+  .cmp__knob {
+    transition: none;
+  }
+  .smodal__close:hover {
+    transform: none;
+  }
+}
