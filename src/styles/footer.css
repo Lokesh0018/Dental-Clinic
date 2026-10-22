@@ -1,0 +1,377 @@
+/* =====================================================================
+   Footer — ink surface with an inline-SVG backdrop: drifting molar outlines,
+   a breathing sky glow, a polish sweep and twinkling sparkles. No raster
+   assets; everything is CSS keyframes on transform/opacity.
+   ===================================================================== */
+.footer {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  padding: clamp(3rem, 6vw, 5rem) 0 clamp(1.25rem, 2.5vw, 2rem);
+  background:
+    radial-gradient(60% 50% at 100% 0%, rgb(169 205 226 / 0.18), transparent 70%),
+    var(--ink);
+  color: var(--white);
+}
+/* curved top edge so the ink block meets the contact section softly */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: clamp(1.5rem, 4vw, 3rem);
+  background: #e2eef5;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------ backdrop */
+.footer__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.footer__glow {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: footer-breathe 9s ease-in-out infinite;
+}
+.footer__glow--2 {
+  animation-delay: -4.5s;
+}
+/* each molar is placed by its <g transform>, scaled by --s, and bobs on its own clock */
+.footer__tooth path {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.16);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(calc(var(--s) * 0.42)) rotate(var(--r));
+  animation: footer-drift var(--d) ease-in-out var(--dl) infinite;
+}
+/* small molars rising from the bottom edge, fading out before the top */
+.footer__riser path {
+  fill: rgb(169 205 226 / 0.1);
+  stroke: rgb(255 255 255 / 0.22);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  transform: scale(var(--s));
+  animation: footer-rise var(--d) linear var(--dl) infinite;
+}
+/* polish sweep crosses the whole footer every ~14s */
+.footer__sweep {
+  animation: footer-sweep 14s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+.footer__spark {
+  fill: var(--lime);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: footer-twinkle 4.2s ease-in-out var(--dl) infinite;
+}
+
+@keyframes footer-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+@keyframes footer-drift {
+  0%,
+  100% {
+    transform: scale(calc(var(--s) * 0.42)) rotate(var(--r)) translateY(0);
+  }
+  50% {
+    transform: scale(calc(var(--s) * 0.42)) rotate(calc(var(--r) + 6deg)) translateY(-6px);
+  }
+}
+@keyframes footer-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(var(--s)) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-115px) scale(var(--s)) rotate(40deg);
+  }
+}
+@keyframes footer-sweep {
+  0%,
+  15% {
+    transform: translateX(0) skewX(-18deg);
+  }
+  65%,
+  100% {
+    transform: translateX(250px) skewX(-18deg);
+  }
+}
+@keyframes footer-twinkle {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(0deg);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1.2) rotate(45deg);
+  }
+  90% {
+    opacity: 0.6;
+    transform: scale(0.9) rotate(90deg);
+  }
+}
+
+/* ---------------------------------------------------------------- grid
+   brand block on the left (about 1/3), three link columns on the right. */
+.footer__inner {
+  position: relative;
+  z-index: 1;
+}
+.footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: 2.5rem clamp(1.5rem, 4vw, 4rem);
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+}
+.footer__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 2.75rem;
+  margin-bottom: 1.1rem;
+  color: var(--white);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.footer__chip {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+  transition: transform 0.35s var(--ease-out);
+}
+.footer__logo:hover .footer__chip {
+  transform: rotate(-10deg);
+}
+.footer__mark {
+  width: 1.2rem;
+  height: auto;
+}
+.footer__title {
+  margin: 0;
+  max-width: 16ch;
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.footer__lede {
+  max-width: 38ch;
+  margin: 0.75rem 0 1.5rem;
+  color: rgb(255 255 255 / 0.7);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+.footer__cta {
+  background: var(--lime);
+  color: var(--ink);
+}
+.footer__cta:hover {
+  background: var(--white);
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------- columns */
+.footer__col h3 {
+  margin: 0 0 0.6rem;
+  color: rgb(255 255 255 / 0.55);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.footer__col ul {
+  display: grid;
+  gap: 0.1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footer__col a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  color: var(--white);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s var(--ease-out), transform 0.3s var(--ease-out);
+}
+/* lime arrow slides in from the left on hover; the link nudges right so nothing overlaps */
+.footer__col a > svg {
+  position: absolute;
+  left: -1.25rem;
+  color: var(--lime);
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.footer__col a:hover,
+.footer__col a:focus-visible {
+  color: var(--lime);
+  transform: translateX(1.25rem);
+}
+.footer__col a:hover > svg,
+.footer__col a:focus-visible > svg {
+  opacity: 1;
+  transform: translateX(0);
+}
+.footer__social {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem !important;
+}
+.footer__social a {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 50%;
+  transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out), border-color 0.25s;
+}
+.footer__social a:hover,
+.footer__social a:focus-visible {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--ink);
+  transform: none;
+}
+
+.footer__col span,
+.footer__muted {
+  color: rgb(255 255 255 / 0.7);
+}
+.footer__muted {
+  margin: 0;
+  max-width: 28ch;
+  line-height: 1.55;
+}
+
+/* -------------------------------------------------------------- bottom */
+.footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding-top: 1.25rem;
+  color: rgb(255 255 255 / 0.6);
+  font-size: 0.9rem;
+}
+.footer__bottom p {
+  margin: 0;
+}
+.footer__up {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  color: var(--white);
+  font-weight: 600;
+  text-decoration: none;
+}
+.footer__up-dot {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  border-radius: 50%;
+  transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out), transform 0.3s var(--ease-out);
+}
+.footer__up-dot svg {
+  transform: rotate(-45deg);
+}
+.footer__up:hover .footer__up-dot {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.footer :focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 3px;
+}
+
+/* ----------------------------------------------------------- responsive */
+@media (max-width: 1023px) {
+  .footer__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 599px) {
+  .footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 1.5rem;
+  }
+  .footer__cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer__riser {
+    display: none;
+  }
+  .footer__col a,
+  .footer__col a > svg {
+    transition: none;
+  }
+  .footer__glow,
+  .footer__tooth path,
+  .footer__sweep,
+  .footer__spark {
+    animation: none;
+  }
+  .footer__spark {
+    opacity: 0.6;
+    transform: scale(0.8);
+  }
+  .footer__chip,
+  .footer__up-dot {
+    transition: none;
+  }
+}

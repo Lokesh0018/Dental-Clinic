@@ -3,6 +3,7 @@ import StickyNav from './components/StickyNav.jsx';
 import AboutSection from './components/sections/AboutSection.jsx';
 import ServicesSection from './components/sections/ServicesSection.jsx';
 import ContactSection from './components/sections/ContactSection.jsx';
+import Footer from './components/sections/Footer.jsx';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <ServicesSection />
         <ContactSection />
       </main>
+      <Footer />
     </>
   );
 }

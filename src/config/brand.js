@@ -85,4 +85,12 @@ export const BRAND = {
   },
 };
 
+// Footer social icons; any entry left null is not rendered.
+BRAND.social = {
+  instagram: null, // e.g. 'https://instagram.com/crowndental'
+  facebook: null,
+  youtube: null,
+  whatsapp: null, // e.g. 'https://wa.me/15550100199'
+};
+
 export const bookingLinkProps = BRAND.booking.external ? { target: '_blank', rel: 'noopener' } : {};
