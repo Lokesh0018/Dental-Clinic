@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import { useActiveSection } from '../../hooks/useActiveSection.js';
 import { useNavIndicator } from '../../hooks/useNavIndicator.js';
+import { lockScroll } from '../../hooks/useScrollLock.js';
 import ToothLogo from './ToothLogo.jsx';
 import ArrowIcon from './ArrowIcon.jsx';
 
@@ -16,7 +17,7 @@ export default function Navigation() {
 
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = 'hidden';
+    const unlock = lockScroll();
     const onKey = (e) => {
       if (e.key === 'Escape') {
         setOpen(false);
@@ -27,7 +28,7 @@ export default function Navigation() {
     window.addEventListener('keydown', onKey);
     window.addEventListener('resize', onResize);
     return () => {
-      document.body.style.overflow = '';
+      unlock();
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('resize', onResize);
     };

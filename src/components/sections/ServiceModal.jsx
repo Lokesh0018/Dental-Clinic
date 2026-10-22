@@ -62,14 +62,15 @@ export default function ServiceModal({ service, index, icon, onClose }) {
     if (!open && el.open) el.close();
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
+
+  const goToBooking = (e) => {
+    const href = BRAND.booking.href;
+    if (!href.startsWith('#')) return onClose(); // external: let the link open normally
+    e.preventDefault();
+    onClose();
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', href);
+  };
 
   if (!service) return null;
 
@@ -120,8 +121,8 @@ export default function ServiceModal({ service, index, icon, onClose }) {
           </ul>
 
           <div className="smodal__actions">
-            {/* close first so the anchor scroll lands on an unlocked page */}
-            <a className="btn btn--primary" href={BRAND.booking.href} {...bookingLinkProps} onClick={onClose}>
+            {/* close first, then jump once the scroll lock has released */}
+            <a className="btn btn--primary" href={BRAND.booking.href} {...bookingLinkProps} onClick={goToBooking}>
               Ask about {service.title.toLowerCase()}
               <ArrowIcon />
             </a>

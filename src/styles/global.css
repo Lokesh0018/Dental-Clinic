@@ -555,17 +555,61 @@ a {
   min-height: 2.75rem;
   padding: 0 1.15rem;
   font-size: 0.92rem;
+  white-space: nowrap;
 }
 .sticky-nav :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
 }
+/* mobile menu hanging off the sticky bar (shares the hero panel's look) */
+.sticky-nav__toggle {
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-color: rgb(23 52 74 / 0.1);
+  background: var(--paper);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.sticky-nav__toggle:hover {
+  background: var(--white);
+}
+.sticky-nav__panel {
+  top: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+}
+/* the bar's backdrop-filter traps fixed descendants, so the scrim is sized from the bar instead */
+.sticky-nav .nav__scrim {
+  position: absolute;
+  z-index: -1;
+  top: -0.75rem;
+  left: 50%;
+  width: 100vw;
+  height: 100dvh;
+  transform: translateX(-50%);
+}
 @media (max-width: 899px) {
+  .sticky-nav {
+    gap: 0.6rem;
+  }
   .sticky-nav__links {
     display: none;
   }
   .sticky-nav__cta {
     margin-left: auto;
+  }
+  .sticky-nav__toggle {
+    display: inline-grid;
+  }
+}
+@media (max-width: 440px) {
+  .sticky-nav__cta {
+    padding: 0 0.9rem;
+  }
+  .sticky-nav__cta svg {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
