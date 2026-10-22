@@ -1,9 +1,9 @@
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
-import ToothLogo from '../hero/ToothLogo.jsx';
+import ToothLogo, { TOOTH_PATH } from '../hero/ToothLogo.jsx';
+import { SERVICE_TITLES } from '../../data/services.jsx';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
 import '../../styles/footer.css';
 
-const SERVICES = ['Root Canal', 'Dental Implants', 'Clear Aligners', 'Smile Designing', 'Zirconia Crowns'];
 
 /* Brand marks from Simple Icons (CC0). Only networks with a URL in BRAND.social render. */
 const SOCIAL = {
@@ -24,10 +24,6 @@ const SOCIAL = {
     path: 'M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 0 1 2.2 12 9.8 9.8 0 0 1 12 2.2 9.8 9.8 0 0 1 21.8 12 9.8 9.8 0 0 1 12 21.8zM12 0C5.4 0 0 5.4 0 12c0 2.1.6 4.2 1.6 6L0 24l6.2-1.6A12 12 0 0 0 12 24c6.6 0 12-5.4 12-12S18.6 0 12 0z',
   },
 };
-
-/* Molar outline reused across the drifting background field (same silhouette as the logo). */
-const TOOTH =
-  'M8.2 2.6C4.4 2.6 1.5 5.7 1.5 10.4c0 3.6 1.4 6.4 2.4 9.6.9 2.9 1.3 6.4 2 9.6.6 2.7 1.6 4.4 3.1 4.4 1.7 0 2.3-2 2.8-4.6.6-3.2 1.3-6.6 4.2-6.6s3.6 3.4 4.2 6.6c.5 2.6 1.1 4.6 2.8 4.6 1.5 0 2.5-1.7 3.1-4.4.7-3.2 1.1-6.7 2-9.6 1-3.2 2.4-6 2.4-9.6 0-4.7-2.9-7.8-6.7-7.8-2.9 0-4.3 1.6-7.8 1.6S11.1 2.6 8.2 2.6z';
 
 /* Big molars that hover in place: position (viewBox units, 160x100), scale, drift duration, delay, tilt. */
 const FIELD = [
@@ -74,14 +70,14 @@ function Backdrop() {
       {/* drifting molars */}
       {FIELD.map((t, i) => (
         <g key={i} className="footer__tooth" transform={`translate(${t.x} ${t.y})`} style={{ '--s': t.s, '--d': `${t.d}s`, '--dl': `${t.dl}s`, '--r': `${t.r}deg` }}>
-          <path d={TOOTH} />
+          <path d={TOOTH_PATH} />
         </g>
       ))}
 
       {/* rising molars */}
       {RISERS.map((t, i) => (
         <g key={`r${i}`} className="footer__riser" transform={`translate(${t.x} 100)`} style={{ '--s': t.s, '--d': `${t.d}s`, '--dl': `${t.dl}s` }}>
-          <path d={TOOTH} />
+          <path d={TOOTH_PATH} />
         </g>
       ))}
 
@@ -155,7 +151,7 @@ export default function Footer() {
           <nav className="footer__col" aria-labelledby="footer-services">
             <h3 id="footer-services">Treatments</h3>
             <ul>
-              {SERVICES.map((s) => (
+              {SERVICE_TITLES.map((s) => (
                 <li key={s}>
                   <a href="#services">
                     <ArrowIcon />

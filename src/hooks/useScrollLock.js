@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 /**
  * Stops the page scrolling behind a menu. Deliberately simple (overflow only):
  * pinning <body> with position:fixed makes scroll-driven UI (hero, sticky nav,
@@ -14,11 +12,4 @@ export function lockScroll() {
   return () => {
     body.overflow = prev;
   };
-}
-
-export function useScrollLock(active) {
-  useEffect(() => {
-    if (!active) return;
-    return lockScroll();
-  }, [active]);
 }

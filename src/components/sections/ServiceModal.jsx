@@ -2,19 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
+import { CheckIcon, CloseIcon } from '../icons.jsx';
 import '../../styles/service-modal.css';
-
-const CloseIcon = () => (
-  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false">
-    <path d="M6 6l12 12M18 6 6 18" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-    <path d="m5 12 4.5 4.5L19 7" />
-  </svg>
-);
 
 /* Drag-to-compare: a transparent range input sits over the frame, so the
    divider moves with mouse, touch, and arrow keys without custom pointer code. */

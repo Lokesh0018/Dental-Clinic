@@ -277,14 +277,8 @@
   transform: none;
 }
 
-.footer__col span,
-.footer__muted {
+.footer__col span {
   color: rgb(255 255 255 / 0.7);
-}
-.footer__muted {
-  margin: 0;
-  max-width: 28ch;
-  line-height: 1.55;
 }
 
 /* -------------------------------------------------------------- bottom */

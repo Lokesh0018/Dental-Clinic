@@ -5,6 +5,9 @@ import { useGSAP } from '@gsap/react';
 import { BRAND } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
+import { iconProps } from '../icons.jsx';
+import { SERVICE_TITLES } from '../../data/services.jsx';
+import { reveal } from '../../hooks/useReveal.js';
 import chairImg from '../../assets/images/chair.webp';
 import cutterImg from '../../assets/images/cutter.webp';
 import mirrorImg from '../../assets/images/mouth-mirror.webp';
@@ -14,8 +17,7 @@ import '../../styles/contact.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/* Icons: 24×24, 2px strokes (Lucide geometry, ISC licence). */
-const icon = { viewBox: '0 0 24 24', width: 22, height: 22, fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true, focusable: false };
+const icon = { ...iconProps, width: 22, height: 22 };
 const ICONS = {
   phone: (
     <svg {...icon}>
@@ -47,7 +49,7 @@ const ICONS = {
   ),
 };
 
-const SERVICE_OPTIONS = ['Root Canal', 'Dental Implants', 'Clear Aligners', 'Smile Designing', 'Zirconia Crowns', 'General check-up', 'Not sure yet'];
+const SERVICE_OPTIONS = [...SERVICE_TITLES, 'General check-up', 'Not sure yet'];
 
 const STEPS = [
   { title: 'We call you back', body: 'Within one working day to confirm a time that suits you.' },
@@ -92,16 +94,6 @@ export default function ContactSection() {
   useGSAP(
     () => {
       if (reduced) return;
-      const reveal = (targets, trigger, vars = {}) =>
-        gsap.from(targets, {
-          autoAlpha: 0,
-          y: 28,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger, start: 'top 82%', once: true },
-          ...vars,
-        });
       reveal('.contact__head > *', '.contact__head');
       reveal('.contact__form-card', '.contact__layout', { y: 36 });
       reveal('.contact__aside > *', '.contact__aside', { stagger: 0.12 });
@@ -199,9 +191,9 @@ export default function ContactSection() {
       </div>
 
       <div className="section__inner">
-        <header className="contact__head">
-          <p className="section__eyebrow contact__eyebrow">
-            <span className="contact__eyebrow-dot" aria-hidden="true" />
+        <header className="section__head contact__head">
+          <p className="section__eyebrow section__eyebrow--pill">
+            <span className="section__eyebrow-dot" aria-hidden="true" />
             Contact
           </p>
           <h2 id="contact-title" className="section__title">

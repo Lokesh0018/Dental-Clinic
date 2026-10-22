@@ -5,6 +5,8 @@ import { useGSAP } from '@gsap/react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import { useMediaQuery } from '../../hooks/useMediaQuery.js';
 import ArrowIcon from '../hero/ArrowIcon.jsx';
+import { CheckIcon, iconProps } from '../icons.jsx';
+import { reveal } from '../../hooks/useReveal.js';
 import aboutImg from '../../assets/images/about.webp';
 import chairImg from '../../assets/images/chair.webp';
 import cutterImg from '../../assets/images/cutter.webp';
@@ -15,8 +17,7 @@ import '../../styles/about.css';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/* Icons: 24×24, 2px strokes (Lucide geometry, ISC licence). */
-const icon = { viewBox: '0 0 24 24', width: 22, height: 22, fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true, focusable: false };
+const icon = { ...iconProps, width: 22, height: 22 };
 
 const ICONS = {
   listen: (
@@ -61,12 +62,6 @@ const STEPS = [
 
 const TRUST = ['Listening first', 'Clear, honest options', 'Care at your pace'];
 
-const CheckIcon = () => (
-  <svg {...icon} width={16} height={16} strokeWidth={2.5}>
-    <path d="m5 12 4.5 4.5L19 7" />
-  </svg>
-);
-
 /* mineral "bubbles" that drift around the heart */
 const BUBBLES = [
   { symbol: 'F', label: 'Fluorine', pos: 'f' },
@@ -82,16 +77,6 @@ export default function AboutSection() {
   useGSAP(
     () => {
       if (reduced) return;
-      const reveal = (targets, trigger, vars = {}) =>
-        gsap.from(targets, {
-          autoAlpha: 0,
-          y: 28,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger, start: 'top 82%', once: true },
-          ...vars,
-        });
       reveal('.about__intro > *', '.about__intro');
       reveal('.about__promise', '.about__promise', { y: 40, duration: 1.1 });
       // bubbles pop in after the heart; their continuous float is CSS (about.css)
@@ -141,8 +126,8 @@ export default function AboutSection() {
         {/* intro: copy + the studio "promise" panel */}
         <div className="about__top">
           <div className="about__intro">
-            <p className="section__eyebrow about__eyebrow">
-              <span className="about__eyebrow-dot" aria-hidden="true" />
+            <p className="section__eyebrow section__eyebrow--pill">
+              <span className="section__eyebrow-dot" aria-hidden="true" />
               About {BRAND.name}
             </p>
             <h2 id="about-title" className="section__title">
@@ -165,7 +150,7 @@ export default function AboutSection() {
             <ul className="about__trust" aria-label="What to expect">
               {TRUST.map((t) => (
                 <li key={t}>
-                  <CheckIcon />
+                  <CheckIcon size={16} strokeWidth={2.5} />
                   {t}
                 </li>
               ))}
