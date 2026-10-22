@@ -174,9 +174,35 @@ a {
 .nav__links a:focus-visible {
   background: rgb(255 255 255 / 0.7);
 }
+/* sliding ink pill behind the current link; --ind-x/--ind-w come from useNavIndicator */
+.nav__links ul {
+  position: relative;
+  isolation: isolate;
+}
+.nav__links ul::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  left: 0;
+  width: var(--ind-w, 0px);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 8px 18px -10px rgb(20 50 90 / 0.7);
+  opacity: 0;
+  transform: translateX(var(--ind-x, 0px));
+  transition: transform 0.4s var(--ease-out), width 0.4s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+.nav__links ul[data-has-active]::before {
+  opacity: 1;
+}
 .nav__links a[aria-current='true'] {
-  background: var(--white);
-  box-shadow: 0 6px 16px -10px rgb(20 50 90 / 0.5);
+  color: var(--white);
+}
+.nav__links a[aria-current='true']:hover,
+.nav__links a[aria-current='true']:focus-visible {
+  background: transparent;
 }
 /* lime dot marks the current section (not colour alone: the pill fill changes too) */
 .nav__links a[aria-current='true']::before {
@@ -350,7 +376,9 @@ a {
 }
 .nav__panel a:not(.btn):hover,
 .nav__panel a:not(.btn)[aria-current='true'] {
-  background: var(--paper);
+  background: var(--ink);
+  color: var(--white);
+  box-shadow: inset 0.3rem 0 0 var(--lime);
 }
 .nav__panel-cta {
   justify-content: center;
@@ -488,9 +516,32 @@ a {
 .sticky-nav__links a:focus-visible {
   background: var(--paper);
 }
+.sticky-nav__links ul {
+  position: relative;
+  isolation: isolate;
+}
+.sticky-nav__links ul::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  width: var(--ind-w, 0px);
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow: 0 8px 18px -10px rgb(20 50 90 / 0.7);
+  opacity: 0;
+  transform: translateX(var(--ind-x, 0px));
+  transition: transform 0.4s var(--ease-out), width 0.4s var(--ease-out), opacity 0.2s var(--ease-out);
+}
+.sticky-nav__links ul[data-has-active]::before {
+  opacity: 1;
+}
 .sticky-nav__links a[aria-current='true'] {
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px rgb(23 52 74 / 0.08);
+  color: var(--white);
+}
+.sticky-nav__links a[aria-current='true']:hover,
+.sticky-nav__links a[aria-current='true']:focus-visible {
+  background: transparent;
 }
 .sticky-nav__links a[aria-current='true']::before {
   content: '';
@@ -518,6 +569,10 @@ a {
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .nav__links ul::before,
+  .sticky-nav__links ul::before {
+    transition: opacity 0.2s linear;
+  }
   .sticky-nav {
     translate: -50% 0;
     transition: opacity 0.2s linear;
@@ -581,33 +636,3 @@ a {
   font-size: 1.1rem;
 }
 
-.contact {
-  background: linear-gradient(180deg, var(--paper), #e2eef5);
-}
-.contact__inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: 3rem;
-  align-items: end;
-}
-.contact__details {
-  display: grid;
-  gap: 1.25rem;
-  margin: 0;
-}
-.contact__details dt {
-  color: var(--ink-soft);
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-.contact__details dd {
-  margin: 0.2rem 0 0;
-  font-size: 1.05rem;
-}
-
-@media (max-width: 900px) {
-  .contact__inner {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}

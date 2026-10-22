@@ -73,6 +73,15 @@ export const BRAND = {
     email: null, // e.g. 'hello@crowndental.com'
     address: null, // e.g. '24 Harbour Street, Suite 3'
     hours: null, // e.g. 'Mon–Fri 8:00–18:00'
+    // Where the booking form POSTs JSON (e.g. a Formspree/Basin URL). With no endpoint,
+    // the form opens the visitor's mail client addressed to `email`; with neither it just confirms.
+    formEndpoint: null,
+    // Map shown beside the booking form. `query` is what Google Maps searches for (address or
+    // clinic name); `embedUrl` overrides it with an exact "Embed a map" URL from Google Maps.
+    map: {
+      query: 'Crown Dental Group',
+      embedUrl: null,
+    },
   },
 };
 

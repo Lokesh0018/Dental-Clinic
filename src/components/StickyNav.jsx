@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BRAND, bookingLinkProps } from '../config/brand.js';
 import ToothLogo from './hero/ToothLogo.jsx';
 import ArrowIcon from './hero/ArrowIcon.jsx';
 import { useActiveSection } from '../hooks/useActiveSection.js';
+import { useNavIndicator } from '../hooks/useNavIndicator.js';
 
 const NAV_HREFS = BRAND.nav.map((i) => i.href);
 
@@ -15,6 +16,8 @@ const NAV_HREFS = BRAND.nav.map((i) => i.href);
 export default function StickyNav() {
   const [visible, setVisible] = useState(false);
   const active = useActiveSection(NAV_HREFS);
+  const list = useRef(null);
+  useNavIndicator(list, active);
 
   useEffect(() => {
     const heroNav = document.querySelector('[data-hero="nav"]');
@@ -34,7 +37,7 @@ export default function StickyNav() {
         <span>{BRAND.shortName}</span>
       </a>
       <nav className="sticky-nav__links" aria-label="Sections">
-        <ul>
+        <ul ref={list}>
           {BRAND.nav.map((item) => (
             <li key={item.href}>
               <a href={item.href} aria-current={active === item.href ? 'true' : undefined}>

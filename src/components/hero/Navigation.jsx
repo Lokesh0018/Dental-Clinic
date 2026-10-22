@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BRAND, bookingLinkProps } from '../../config/brand.js';
 import { useActiveSection } from '../../hooks/useActiveSection.js';
+import { useNavIndicator } from '../../hooks/useNavIndicator.js';
 import ToothLogo from './ToothLogo.jsx';
 import ArrowIcon from './ArrowIcon.jsx';
 
@@ -10,6 +11,8 @@ export default function Navigation() {
   const [open, setOpen] = useState(false);
   const active = useActiveSection(NAV_HREFS);
   const toggle = useRef(null);
+  const list = useRef(null);
+  useNavIndicator(list, active);
 
   useEffect(() => {
     if (!open) return;
@@ -43,7 +46,7 @@ export default function Navigation() {
         </a>
 
         <nav className="nav__links" aria-label="Primary">
-          <ul>
+          <ul ref={list}>
             {BRAND.nav.map((item) => (
               <li key={item.href}>
                 <a href={item.href} aria-current={active === item.href ? 'true' : undefined}>
